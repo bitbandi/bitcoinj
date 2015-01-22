@@ -64,6 +64,9 @@ public class MainNetParams extends NetworkParameters {
                 "seed.bitcoinstats.com",       // Chris Decker
                 "seed.bitnodes.io",            // Addy Yeow
         };
+
+        firstHardforkBlock = 2200;
+        secondHardforkBlock = 43000;
     }
 
     private static MainNetParams instance;

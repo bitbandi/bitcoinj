@@ -54,6 +54,9 @@ public class TestNetParams extends NetworkParameters {
                 "testnet-seed.bitcoin.schildbach.de", // Andreas Schildbach
                 "testnet-seed.bitcoin.petertodd.org"  // Peter Todd
         };
+
+        firstHardforkBlock = 0;
+        secondHardforkBlock = 0;
     }
 
     private static TestNetParams instance;

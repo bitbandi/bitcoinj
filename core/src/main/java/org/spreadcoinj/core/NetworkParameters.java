@@ -76,6 +76,9 @@ public abstract class NetworkParameters implements Serializable {
     protected int targetTimespan;
     protected byte[] alertSigningKey;
 
+    protected int firstHardforkBlock;
+    protected int secondHardforkBlock;
+
     /**
      * See getId(). This may be null for old deserialized wallets. In that case we derive it heuristically
      * by looking at the port number.
@@ -332,4 +335,13 @@ public abstract class NetworkParameters implements Serializable {
     public byte[] getAlertSigningKey() {
         return alertSigningKey;
     }
+
+    public int getFirstHardforkBlock() {
+        return firstHardforkBlock;
+    }
+
+    public int getSecondHardforkBlock() {
+        return secondHardforkBlock;
+    }
+
 }
