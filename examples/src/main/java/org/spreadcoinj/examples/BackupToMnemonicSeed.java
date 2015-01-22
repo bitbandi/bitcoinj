@@ -2,7 +2,7 @@ package org.spreadcoinj.examples;
 
 import org.spreadcoinj.core.NetworkParameters;
 import org.spreadcoinj.core.Wallet;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.wallet.DeterministicSeed;
 import com.google.common.base.Joiner;
 
@@ -18,7 +18,7 @@ public class BackupToMnemonicSeed {
 
     public static void main(String[] args) {
 
-        NetworkParameters params = TestNet3Params.get();
+        NetworkParameters params = TestNetParams.get();
         Wallet wallet = new Wallet(params);
 
         DeterministicSeed seed = wallet.getKeyChainSeed();

@@ -18,7 +18,7 @@
 package org.spreadcoinj.examples;
 
 import org.spreadcoinj.core.*;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.store.BlockStore;
 import org.spreadcoinj.store.MemoryBlockStore;
 import org.spreadcoinj.utils.BriefLogFormatter;
@@ -33,7 +33,7 @@ public class FetchBlock {
     public static void main(String[] args) throws Exception {
         BriefLogFormatter.init();
         System.out.println("Connecting to node");
-        final NetworkParameters params = TestNet3Params.get();
+        final NetworkParameters params = TestNetParams.get();
 
         BlockStore blockStore = new MemoryBlockStore(params);
         BlockChain chain = new BlockChain(params, blockStore);

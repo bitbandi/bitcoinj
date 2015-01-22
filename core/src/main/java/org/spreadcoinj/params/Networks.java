@@ -25,13 +25,13 @@ import java.util.Set;
 
 /**
  * Utility class that holds all the registered NetworkParameters types used for Address auto discovery.
- * By default only MainNetParams and TestNet3Params are used. If you want to use TestNet2, RegTestParams or
- * UnitTestParams use the register and unregister the TestNet3Params as they don't have their own address
+ * By default only MainNetParams and TestNetParams are used. If you want to use RegTestParams or
+ * UnitTestParams use the register and unregister the TestNetParams as they don't have their own address
  * version/type code.
  */
 public class Networks {
     /** Registered networks */
-    private static Set<NetworkParameters> networks = ImmutableSet.of(TestNet3Params.get(), MainNetParams.get());
+    private static Set<NetworkParameters> networks = ImmutableSet.of(TestNetParams.get(), MainNetParams.get());
 
     public static Set<NetworkParameters> get() {
         return networks;

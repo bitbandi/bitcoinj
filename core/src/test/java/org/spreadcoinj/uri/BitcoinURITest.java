@@ -20,7 +20,7 @@ package org.spreadcoinj.uri;
 
 import org.spreadcoinj.core.Address;
 import org.spreadcoinj.params.MainNetParams;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
@@ -139,7 +139,7 @@ public class BitcoinURITest {
     @Test
     public void testBad_IncorrectAddressType() {
         try {
-            testObject = new BitcoinURI(TestNet3Params.get(), BitcoinURI.BITCOIN_SCHEME + ":" + MAINNET_GOOD_ADDRESS);
+            testObject = new BitcoinURI(TestNetParams.get(), BitcoinURI.BITCOIN_SCHEME + ":" + MAINNET_GOOD_ADDRESS);
             fail("Expecting BitcoinURIParseException");
         } catch (BitcoinURIParseException e) {
             assertTrue(e.getMessage().contains("Bad address"));
@@ -370,7 +370,7 @@ public class BitcoinURITest {
     @Test
     public void testPaymentProtocolReq() throws Exception {
         // Non-backwards compatible form ...
-        BitcoinURI uri = new BitcoinURI(TestNet3Params.get(), "bitcoin:?r=https%3A%2F%2Fbitcoincore.org%2F%7Egavin%2Ff.php%3Fh%3Db0f02e7cea67f168e25ec9b9f9d584f9");
+        BitcoinURI uri = new BitcoinURI(TestNetParams.get(), "bitcoin:?r=https%3A%2F%2Fbitcoincore.org%2F%7Egavin%2Ff.php%3Fh%3Db0f02e7cea67f168e25ec9b9f9d584f9");
         assertEquals("https://bitcoincore.org/~gavin/f.php?h=b0f02e7cea67f168e25ec9b9f9d584f9", uri.getPaymentRequestUrl());
         assertEquals(ImmutableList.of("https://bitcoincore.org/~gavin/f.php?h=b0f02e7cea67f168e25ec9b9f9d584f9"),
                 uri.getPaymentRequestUrls());
@@ -395,7 +395,7 @@ public class BitcoinURITest {
 
     @Test
     public void testUnescapedPaymentProtocolReq() throws Exception {
-        BitcoinURI uri = new BitcoinURI(TestNet3Params.get(),
+        BitcoinURI uri = new BitcoinURI(TestNetParams.get(),
                 "bitcoin:?r=https://merchant.com/pay.php?h%3D2a8628fc2fbe");
         assertEquals("https://merchant.com/pay.php?h=2a8628fc2fbe", uri.getPaymentRequestUrl());
         assertEquals(ImmutableList.of("https://merchant.com/pay.php?h=2a8628fc2fbe"), uri.getPaymentRequestUrls());

@@ -2,7 +2,7 @@ package org.spreadcoinj.examples;
 
 import org.spreadcoinj.core.*;
 import org.spreadcoinj.net.discovery.DnsDiscovery;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.store.SPVBlockStore;
 import org.spreadcoinj.wallet.DeterministicSeed;
 
@@ -15,7 +15,7 @@ import java.io.File;
 public class RestoreFromSeed {
 
     public static void main(String[] args) throws Exception {
-        NetworkParameters params = TestNet3Params.get();
+        NetworkParameters params = TestNetParams.get();
 
         // Bitcoinj supports hierarchical deterministic wallets (or "HD Wallets"): https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
         // HD wallets allow you to restore your wallet simply from a root seed. This seed can be represented using a short mnemonic sentence as described in BIP 39: https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki

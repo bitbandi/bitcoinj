@@ -26,7 +26,7 @@ import org.spreadcoinj.crypto.MnemonicException;
 import org.spreadcoinj.net.discovery.DnsDiscovery;
 import org.spreadcoinj.params.MainNetParams;
 import org.spreadcoinj.params.RegTestParams;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.protocols.payments.PaymentProtocol;
 import org.spreadcoinj.protocols.payments.PaymentProtocolException;
 import org.spreadcoinj.protocols.payments.PaymentSession;
@@ -258,7 +258,7 @@ public class WalletTool {
                 chainFileName = new File("prodnet.chain");
                 break;
             case TEST:
-                params = TestNet3Params.get();
+                params = TestNetParams.get();
                 chainFileName = new File("testnet.chain");
                 break;
             case REGTEST:

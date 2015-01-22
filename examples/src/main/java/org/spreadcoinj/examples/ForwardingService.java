@@ -22,7 +22,7 @@ import org.spreadcoinj.crypto.KeyCrypterException;
 import org.spreadcoinj.kits.WalletAppKit;
 import org.spreadcoinj.params.MainNetParams;
 import org.spreadcoinj.params.RegTestParams;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.utils.BriefLogFormatter;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -52,7 +52,7 @@ public class ForwardingService {
         NetworkParameters params;
         String filePrefix;
         if (args.length > 1 && args[1].equals("testnet")) {
-            params = TestNet3Params.get();
+            params = TestNetParams.get();
             filePrefix = "forwarding-service-testnet";
         } else if (args.length > 1 && args[1].equals("regtest")) {
             params = RegTestParams.get();

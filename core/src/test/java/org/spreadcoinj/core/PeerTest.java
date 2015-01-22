@@ -16,7 +16,7 @@
 
 package org.spreadcoinj.core;
 
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.testing.FakeTxBuilder;
 import org.spreadcoinj.testing.InboundMessageQueuer;
 import org.spreadcoinj.testing.TestWithNetworkConnections;
@@ -891,7 +891,7 @@ public class PeerTest extends TestWithNetworkConnections {
                 peerDisconnected.set(null);
             }
         });
-        final NetworkParameters params = TestNet3Params.get();
+        final NetworkParameters params = TestNetParams.get();
         BitcoinSerializer serializer = new BitcoinSerializer(params);
         // Now write some bogus truncated message.
         ByteArrayOutputStream out = new ByteArrayOutputStream();

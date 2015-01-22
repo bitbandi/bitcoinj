@@ -17,7 +17,7 @@
 
 package org.spreadcoinj.core;
 
-import org.spreadcoinj.params.TestNet2Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.params.UnitTestParams;
 import org.spreadcoinj.script.ScriptOpCodes;
 import org.junit.Test;
@@ -33,7 +33,7 @@ import static org.spreadcoinj.core.Utils.HEX;
 import static org.junit.Assert.*;
 
 public class BlockTest {
-    static final NetworkParameters params = TestNet2Params.get();
+    static final NetworkParameters params = TestNetParams.get();
 
     public static final byte[] blockBytes;
 

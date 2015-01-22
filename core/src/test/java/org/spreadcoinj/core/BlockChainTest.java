@@ -19,7 +19,7 @@ package org.spreadcoinj.core;
 
 import org.spreadcoinj.core.Wallet.BalanceType;
 import org.spreadcoinj.params.MainNetParams;
-import org.spreadcoinj.params.TestNet2Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.params.UnitTestParams;
 import org.spreadcoinj.store.BlockStore;
 import org.spreadcoinj.store.MemoryBlockStore;
@@ -53,7 +53,7 @@ public class BlockChainTest {
     private final StoredBlock[] block = new StoredBlock[1];
     private Transaction coinbaseTransaction;
 
-    private static class TweakableTestNet2Params extends TestNet2Params {
+    private static class TweakableTestNet2Params extends TestNetParams {
         public void setMaxTarget(BigInteger limit) {
             maxTarget = limit;
         }

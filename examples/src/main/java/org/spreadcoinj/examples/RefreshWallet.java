@@ -18,7 +18,7 @@
 package org.spreadcoinj.examples;
 
 import org.spreadcoinj.core.*;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.store.BlockStore;
 import org.spreadcoinj.store.MemoryBlockStore;
 
@@ -35,7 +35,7 @@ public class RefreshWallet {
         System.out.println(wallet.toString());
 
         // Set up the components and link them together.
-        final NetworkParameters params = TestNet3Params.get();
+        final NetworkParameters params = TestNetParams.get();
         BlockStore blockStore = new MemoryBlockStore(params);
         BlockChain chain = new BlockChain(params, wallet, blockStore);
 

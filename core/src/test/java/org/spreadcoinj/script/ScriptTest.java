@@ -23,7 +23,7 @@ import org.spreadcoinj.core.*;
 import org.spreadcoinj.core.Transaction.SigHash;
 import org.spreadcoinj.crypto.TransactionSignature;
 import org.spreadcoinj.params.MainNetParams;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.script.Script.VerifyFlag;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
@@ -54,7 +54,7 @@ public class ScriptTest {
 
     static final String pubkeyProg = "76a91433e81a941e64cda12c6a299ed322ddbdd03f8d0e88ac";
 
-    static final NetworkParameters params = TestNet3Params.get();
+    static final NetworkParameters params = TestNetParams.get();
 
     private static final Logger log = LoggerFactory.getLogger(ScriptTest.class);
 

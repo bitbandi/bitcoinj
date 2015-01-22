@@ -26,8 +26,8 @@ import static com.google.common.base.Preconditions.checkState;
  * Parameters for the testnet, a separate public instance of Bitcoin that has relaxed rules suitable for development
  * and testing of applications and new Bitcoin versions.
  */
-public class TestNet3Params extends NetworkParameters {
-    public TestNet3Params() {
+public class TestNetParams extends NetworkParameters {
+    public TestNetParams() {
         super();
         id = ID_TESTNET;
         // Genesis hash is 000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943
@@ -56,10 +56,10 @@ public class TestNet3Params extends NetworkParameters {
         };
     }
 
-    private static TestNet3Params instance;
-    public static synchronized TestNet3Params get() {
+    private static TestNetParams instance;
+    public static synchronized TestNetParams get() {
         if (instance == null) {
-            instance = new TestNet3Params();
+            instance = new TestNetParams();
         }
         return instance;
     }

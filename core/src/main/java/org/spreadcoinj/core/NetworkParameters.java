@@ -141,22 +141,10 @@ public abstract class NetworkParameters implements Serializable {
      */
     public static final Coin MAX_MONEY = COIN.multiply(MAX_COINS);
 
-    /** Alias for TestNet3Params.get(), use that instead. */
+    /** Alias for TestNetParams.get(), use that instead. */
     @Deprecated
     public static NetworkParameters testNet() {
-        return TestNet3Params.get();
-    }
-
-    /** Alias for TestNet2Params.get(), use that instead. */
-    @Deprecated
-    public static NetworkParameters testNet2() {
-        return TestNet2Params.get();
-    }
-
-    /** Alias for TestNet3Params.get(), use that instead. */
-    @Deprecated
-    public static NetworkParameters testNet3() {
-        return TestNet3Params.get();
+        return TestNetParams.get();
     }
 
     /** Alias for MainNetParams.get(), use that instead */
@@ -205,7 +193,7 @@ public abstract class NetworkParameters implements Serializable {
         if (id.equals(ID_MAINNET)) {
             return MainNetParams.get();
         } else if (id.equals(ID_TESTNET)) {
-            return TestNet3Params.get();
+            return TestNetParams.get();
         } else if (id.equals(ID_UNITTESTNET)) {
             return UnitTestParams.get();
         } else if (id.equals(ID_REGTEST)) {
@@ -221,7 +209,7 @@ public abstract class NetworkParameters implements Serializable {
         if (pmtProtocolId.equals(PAYMENT_PROTOCOL_ID_MAINNET)) {
             return MainNetParams.get();
         } else if (pmtProtocolId.equals(PAYMENT_PROTOCOL_ID_TESTNET)) {
-            return TestNet3Params.get();
+            return TestNetParams.get();
         } else {
             return null;
         }

@@ -4,7 +4,7 @@ import org.spreadcoinj.core.NetworkParameters;
 import org.spreadcoinj.kits.WalletAppKit;
 import org.spreadcoinj.params.MainNetParams;
 import org.spreadcoinj.params.RegTestParams;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.utils.BriefLogFormatter;
 import org.spreadcoinj.utils.Threading;
 import org.spreadcoinj.wallet.DeterministicSeed;
@@ -30,7 +30,7 @@ import static wallettemplate.utils.GuiUtils.*;
 public class Main extends Application {
     public static String APP_NAME = "WalletTemplate";
 
-    public static NetworkParameters params = TestNet3Params.get();
+    public static NetworkParameters params = TestNetParams.get();
     public static WalletAppKit bitcoin;
     public static Main instance;
 
@@ -123,7 +123,7 @@ public class Main extends Application {
             // Checkpoint files are made using the BuildCheckpoints tool and usually we have to download the
             // last months worth or more (takes a few seconds).
             bitcoin.setCheckpoints(getClass().getResourceAsStream("checkpoints"));
-        } else if (params == TestNet3Params.get()) {
+        } else if (params == TestNetParams.get()) {
             bitcoin.setCheckpoints(getClass().getResourceAsStream("checkpoints.testnet"));
             // As an example!
             bitcoin.useTor();

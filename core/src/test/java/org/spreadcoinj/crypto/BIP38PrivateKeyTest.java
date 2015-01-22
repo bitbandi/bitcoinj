@@ -19,7 +19,7 @@ package org.spreadcoinj.crypto;
 import org.spreadcoinj.core.ECKey;
 import org.spreadcoinj.crypto.BIP38PrivateKey.BadPassphraseException;
 import org.spreadcoinj.params.MainNetParams;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 public class BIP38PrivateKeyTest {
 
     private static final MainNetParams MAINNET = MainNetParams.get();
-    private static final TestNet3Params TESTNET = TestNet3Params.get();
+    private static final TestNetParams TESTNET = TestNetParams.get();
 
     @Test
     public void bip38testvector_noCompression_noEcMultiply_test1() throws Exception {

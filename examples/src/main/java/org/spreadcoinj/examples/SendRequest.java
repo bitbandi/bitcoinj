@@ -6,7 +6,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.spreadcoinj.core.*;
 import org.spreadcoinj.core.Wallet.BalanceType;
 import org.spreadcoinj.kits.WalletAppKit;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 
 import java.io.File;
 
@@ -18,7 +18,7 @@ public class SendRequest {
     public static void main(String[] args) throws Exception {
 
         // We use the WalletAppKit that handles all the boilerplate for us. Have a look at the Kit.java example for more details.
-        NetworkParameters params = TestNet3Params.get();
+        NetworkParameters params = TestNetParams.get();
         WalletAppKit kit = new WalletAppKit(params, new File("."), "sendrequest-example");
         kit.startAsync();
         kit.awaitRunning();

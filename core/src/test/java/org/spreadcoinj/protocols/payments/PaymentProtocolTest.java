@@ -18,7 +18,7 @@ package org.spreadcoinj.protocols.payments;
 
 import org.spreadcoinj.core.*;
 import org.spreadcoinj.crypto.X509Utils;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.params.UnitTestParams;
 import org.spreadcoinj.protocols.payments.PaymentProtocol.Output;
 import org.spreadcoinj.protocols.payments.PaymentProtocol.PkiVerificationData;
@@ -102,7 +102,7 @@ public class PaymentProtocolTest {
     @Test
     public void testPaymentRequest() throws Exception {
         // Create
-        PaymentRequest paymentRequest = PaymentProtocol.createPaymentRequest(TestNet3Params.get(), AMOUNT, TO_ADDRESS, MEMO,
+        PaymentRequest paymentRequest = PaymentProtocol.createPaymentRequest(TestNetParams.get(), AMOUNT, TO_ADDRESS, MEMO,
                 PAYMENT_URL, MERCHANT_DATA).build();
         byte[] paymentRequestBytes = paymentRequest.toByteArray();
 

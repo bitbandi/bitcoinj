@@ -2,7 +2,7 @@ package org.spreadcoinj.examples;
 
 import org.spreadcoinj.core.*;
 import org.spreadcoinj.kits.WalletAppKit;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import org.spreadcoinj.script.Script;
 
 import java.io.File;
@@ -21,13 +21,13 @@ public class Kit {
         // First we configure the network we want to use.
         // The available options are:
         // - MainNetParams
-        // - TestNet3Params
+        // - TestNetParams
         // - RegTestParams
         // While developing your application you probably want to use the Regtest mode and run your local bitcoin network. Run bitcoind with the -regtest flag
         // To test you app with a real network you can use the testnet. The testnet is an alternative bitcoin network that follows the same rules as main network. Coins are worth nothing and you can get coins for example from http://faucet.xeno-genesis.com/
         // 
         // For more information have a look at: https://spreadcoinj.github.io/testing and https://bitcoin.org/en/developer-examples#testing-applications
-        NetworkParameters params = TestNet3Params.get();
+        NetworkParameters params = TestNetParams.get();
 
         // Now we initialize a new WalletAppKit. The kit handles all the boilerplate for us and is the easiest way to get everything up and running.
         // Have a look at the WalletAppKit documentation and its source to understand what's happening behind the scenes: https://github.com/spreadcoinj/spreadcoinj/blob/master/core/src/main/java/org/spreadcoinj/kits/WalletAppKit.java

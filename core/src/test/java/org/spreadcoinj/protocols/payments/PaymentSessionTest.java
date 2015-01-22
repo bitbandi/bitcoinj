@@ -20,7 +20,7 @@ package org.spreadcoinj.protocols.payments;
 import org.spreadcoinj.core.*;
 import org.spreadcoinj.crypto.TrustStoreLoader;
 import org.spreadcoinj.params.MainNetParams;
-import org.spreadcoinj.params.TestNet3Params;
+import org.spreadcoinj.params.TestNetParams;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.ByteString;
 import org.bitcoin.protocols.payments.Protos;
@@ -36,7 +36,7 @@ import static org.spreadcoinj.core.Coin.COIN;
 import static org.junit.Assert.*;
 
 public class PaymentSessionTest {
-    private static final NetworkParameters params = TestNet3Params.get();
+    private static final NetworkParameters params = TestNetParams.get();
     private static final String simplePaymentUrl = "http://a.simple.url.com/";
     private static final String paymentRequestMemo = "send coinz noa plz kthx";
     private static final String paymentMemo = "take ze coinz";
