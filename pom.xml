@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.bitcoinj</groupId>
-  <artifactId>bitcoinj-parent</artifactId>
+  <groupId>org.spreadcoinj</groupId>
+  <artifactId>spreadcoinj-parent</artifactId>
   <version>0.12.2</version>
   <packaging>pom</packaging>
 
@@ -20,14 +20,14 @@
   </parent>
 
   <scm>
-    <connection>scm:git:https://github.com/bitcoinj/bitcoinj</connection>
-    <developerConnection>scm:git:https://github.com/bitcoinj/bitcoinj</developerConnection>
-    <url>scm:git:https://github.com/bitcoinj/bitcoinj</url>
+    <connection>scm:git:https://github.com/spreadcoinj/spreadcoinj</connection>
+    <developerConnection>scm:git:https://github.com/spreadcoinj/spreadcoinj</developerConnection>
+    <url>scm:git:https://github.com/spreadcoinj/spreadcoinj</url>
   </scm>
 
-  <name>bitcoinj Parent</name>
-  <description>Provides the common configuration for the BitCoinJ modules</description>
-  <url>http://www.bitcoinj.org/</url>
+  <name>spreadcoinj Parent</name>
+  <description>Provides the common configuration for the SpreadCoinJ modules</description>
+  <url>http://www.spreadcoinj.org/</url>
 
   <licenses>
     <license>
@@ -40,15 +40,8 @@
 
   <issueManagement>
     <system>Google Code</system>
-    <url>http://code.google.com/p/bitcoinj/issues/list</url>
+    <url>http://code.google.com/p/spreadcoinj/issues/list</url>
   </issueManagement>
-
-  <mailingLists>
-    <mailingList>
-      <name>bitcoinj Google Group</name>
-      <post>https://groups.google.com/forum/#!forum/bitcoinj</post>
-    </mailingList>
-  </mailingLists>
 
   <distributionManagement>
     <snapshotRepository>
@@ -149,7 +142,7 @@
         <artifactId>slf4j-api</artifactId>
         <version>1.7.6</version>
       </dependency>
-      <!-- bitcoinj consumers are expected to provide their own SLF4J adapters
+      <!-- spreadcoinj consumers are expected to provide their own SLF4J adapters
     such as logback, slf4j-log4j12, slf4j-jcl and so on
     see http://www.slf4j.org/faq.html -->
       <dependency>

@@ -1,6 +1,6 @@
 package wallettemplate.utils;
 
-import org.bitcoinj.core.*;
+import org.spreadcoinj.core.*;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
