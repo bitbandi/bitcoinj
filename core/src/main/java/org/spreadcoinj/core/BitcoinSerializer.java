@@ -190,6 +190,8 @@ public class BitcoinSerializer {
         try {
             return makeMessage(header.command, header.size, payloadBytes, hash, header.checksum);
         } catch (Exception e) {
+            if (e instanceof ProtocolException && e.getMessage().equals("Client using bugger code"))
+                throw (ProtocolException)e;
             throw new ProtocolException("Error deserializing message " + HEX.encode(payloadBytes) + "\n", e);
         }
     }

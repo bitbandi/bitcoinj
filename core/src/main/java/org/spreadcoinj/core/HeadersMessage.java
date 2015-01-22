@@ -89,6 +89,9 @@ public class HeadersMessage extends Message {
                 blockHeader = readBytes(186);
                 if (blockHeader[185] != 0)
                     throw new ProtocolException("Block header does not end with a null byte");
+                // Workaround for missing data
+                if (blockHeader[184] == 0 && Arrays.equals(new byte[96], Arrays.copyOfRange(blockHeader, 88, 184)))
+                    throw new ProtocolException("Client using bugger code");
             } else {
                 blockHeader = readBytes(89);
                 if (blockHeader[88] != 0)

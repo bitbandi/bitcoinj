@@ -55,6 +55,9 @@ public class Block extends Message {
     private static final Logger log = LoggerFactory.getLogger(Block.class);
     private static final long serialVersionUID = 2738848929966035281L;
 
+    /** The protocol version at which fixed the headers send bug. */
+    public static final int MIN_PROTOCOL_VERSION = 70019;
+
     /** How many bytes are required to represent a block header WITHOUT the trailing 00 length byte. */
     public static final int HEADER_SIZE_NEW = 185;
     public static final int HEADER_SIZE_OLD = 88;
