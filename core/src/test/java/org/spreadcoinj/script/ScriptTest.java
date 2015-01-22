@@ -48,11 +48,13 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
 
 public class ScriptTest {
-    // From tx 05e04c26c12fe408a3c1b71aa7996403f6acad1045252b1c62e055496f4d2cb1 on the testnet.
+    // From tx 07c1fc3eb4c6f0120e0e2e31def2e8ce6aa90c27b9f7460512fbac49aeff8224 on the testnet.
 
-    static final String sigProg = "47304402202b4da291cc39faf8433911988f9f49fc5c995812ca2f94db61468839c228c3e90220628bff3ff32ec95825092fa051cba28558a981fcf59ce184b14f2e215e69106701410414b38f4be3bb9fa0f4f32b74af07152b2f2f630bc02122a491137b6c523e46f18a0d5034418966f93dfc37cc3739ef7b2007213a302b7fba161557f4ad644a1c";
+    static final String sigProg = "421c6757377026984e1067dd1a4bde326d1ff7f8d80a5d7a937585e5c62382a3af97ac6c2c5d77d70cfdd70cdf39ffabe2bb367a83002b0af22dbeb8bf2a9d6d3f3d01";
 
-    static final String pubkeyProg = "76a91433e81a941e64cda12c6a299ed322ddbdd03f8d0e88ac";
+    static final String sigHash = "711a8564c3fd4319cdca77e296f50c289815837780d3c7ea49618678a6aeff87";
+
+    static final String pubkeyProg = "140be006a3ccb419f722e559065625f98e5a8003e5ac";
 
     static final NetworkParameters params = TestNetParams.get();
 
@@ -61,11 +63,12 @@ public class ScriptTest {
     @Test
     public void testScriptSig() throws Exception {
         byte[] sigProgBytes = HEX.decode(sigProg);
+        byte[] sigHashBytes = HEX.decode(sigHash);
         Script script = new Script(sigProgBytes);
         // Test we can extract the from address.
-        byte[] hash160 = Utils.sha256hash160(script.getPubKey());
+        byte[] hash160 = Utils.sha256hash160(script.getPubKey(sigHashBytes));
         Address a = new Address(params, hash160);
-        assertEquals("mkFQohBpy2HDXrCwyMrYL5RtfrmeiuuPY2", a.toString());
+        assertEquals("miq2vYnQJb2x3bRLGw76jUc2o5zzo1UTK9", a.toString());
     }
 
     @Test
@@ -73,9 +76,9 @@ public class ScriptTest {
         // Check we can extract the to address
         byte[] pubkeyBytes = HEX.decode(pubkeyProg);
         Script pubkey = new Script(pubkeyBytes);
-        assertEquals("DUP HASH160 PUSHDATA(20)[33e81a941e64cda12c6a299ed322ddbdd03f8d0e] EQUALVERIFY CHECKSIG", pubkey.toString());
+        assertEquals("PUSHDATA(20)[0be006a3ccb419f722e559065625f98e5a8003e5] CHECKSIG", pubkey.toString());
         Address toAddr = new Address(params, pubkey.getPubKeyHash());
-        assertEquals("mkFQohBpy2HDXrCwyMrYL5RtfrmeiuuPY2", toAddr.toString());
+        assertEquals("mgbk6kyyj31BXyfwpBgkqVZrEjL3rVs4Wk", toAddr.toString());
     }
 
     @Test

@@ -33,6 +33,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.*;
 
 import static org.spreadcoinj.script.ScriptOpCodes.*;
@@ -225,13 +226,19 @@ public class Script {
      * to send somebody money with a written code because their node is offline, but over time has become the standard
      * way to make payments due to the short and recognizable base58 form addresses come in.
      */
-    public boolean isSentToAddress() {
+    public boolean isSentToAddressOld() {
         return chunks.size() == 5 &&
                chunks.get(0).equalsOpCode(OP_DUP) &&
                chunks.get(1).equalsOpCode(OP_HASH160) &&
                chunks.get(2).data.length == Address.LENGTH &&
                chunks.get(3).equalsOpCode(OP_EQUALVERIFY) &&
                chunks.get(4).equalsOpCode(OP_CHECKSIG);
+    }
+
+    public boolean isSentToAddress() {
+        return chunks.size() == 2 &&
+                chunks.get(0).data.length == Address.LENGTH &&
+                chunks.get(1).equalsOpCode(OP_CHECKSIG);
     }
 
     /**
@@ -250,11 +257,32 @@ public class Script {
      */
     public byte[] getPubKeyHash() throws ScriptException {
         if (isSentToAddress())
+            return chunks.get(0).data;
+        else if (isSentToAddressOld())
             return chunks.get(2).data;
         else if (isPayToScriptHash())
             return chunks.get(1).data;
         else
             throw new ScriptException("Script not in the standard scriptPubKey form");
+    }
+
+    /**
+     * Returns the public key in this script.
+     *
+     * @throws ScriptException if the script is none of the named forms.
+     */
+    public byte[] getPubKey(byte[] hash) throws ScriptException {
+        if (chunks.size() != 1) {
+            throw new ScriptException("Script not of right size, expecting 1 but got " + chunks.size());
+        }
+        final ScriptChunk chunk0 = chunks.get(0);
+        final byte[] chunk0data = chunk0.data;
+        try {
+            ECKey e = ECKey.signedToKey(new Sha256Hash(hash), chunk0data, true);
+            return e.getPubKey();
+        } catch (SignatureException e1) {
+            throw new ScriptException("Script did not match expected form: " + toString());
+        }
     }
 
     /**
@@ -1267,9 +1295,15 @@ public class Script {
         // TODO: Use int for indexes everywhere, we can't have that many inputs/outputs
         boolean sigValid = false;
         try {
-            TransactionSignature sig  = TransactionSignature.decodeFromBitcoin(sigBytes, false);
-            Sha256Hash hash = txContainingThis.hashForSignature(index, connectedScript, (byte) sig.sighashFlags);
-            sigValid = ECKey.verify(hash.getBytes(), sig, pubKey);
+            if (pubKey.length == 20) {
+                Sha256Hash hash = txContainingThis.hashForSignature(index, connectedScript, (byte) sigBytes[sigBytes.length - 1]);
+                ECKey e = ECKey.signedToKey(hash, sigBytes, true);
+                sigValid = Arrays.equals(e.getPubKeyHash(), pubKey);
+            } else {
+                TransactionSignature sig  = TransactionSignature.decodeFromBitcoin(sigBytes, false);
+                Sha256Hash hash = txContainingThis.hashForSignature(index, connectedScript, (byte) sig.sighashFlags);
+                sigValid = ECKey.verify(hash.getBytes(), sig, pubKey);
+            }
         } catch (Exception e1) {
             // There is (at least) one exception that could be hit here (EOFException, if the sig is too short)
             // Because I can't verify there aren't more, we use a very generic Exception catch

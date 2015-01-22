@@ -35,6 +35,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.hashengineering.crypto.X11.x11Digest;
+import static org.spreadcoinj.core.Coin.COIN;
 import static org.spreadcoinj.core.Coin.FIFTY_COINS;
 import static org.spreadcoinj.core.Utils.doubleDigest;
 import static org.spreadcoinj.core.Utils.doubleDigestTwoBuffers;
@@ -54,7 +56,9 @@ public class Block extends Message {
     private static final long serialVersionUID = 2738848929966035281L;
 
     /** How many bytes are required to represent a block header WITHOUT the trailing 00 length byte. */
-    public static final int HEADER_SIZE = 80;
+    public static final int HEADER_SIZE_NEW = 185;
+    public static final int HEADER_SIZE_OLD = 88;
+    public static final int HEADER_POS_HEIGHT = 80;
 
     static final long ALLOWED_TIME_DRIFT = 2 * 60 * 60; // Same value as official client.
 
@@ -80,13 +84,19 @@ public class Block extends Message {
     private Sha256Hash merkleRoot;
     private long time;
     private long difficultyTarget; // "nBits"
+    private long height;
     private long nonce;
+
+    // Spread mining extensions:
+    private Sha256Hash hashWholeBlock; // proof of whole block knowledge
+    private MinerSignature minerSignature; // proof of private key knowledge
 
     /** If null, it means this object holds only the headers. */
     List<Transaction> transactions;
 
     /** Stores the hash of the block. If null, getHash() will recalculate it. */
     private transient Sha256Hash hash;
+    private transient Sha256Hash powHash;
 
     private transient boolean headerParsed;
     private transient boolean transactionsParsed;
@@ -104,11 +114,14 @@ public class Block extends Message {
         super(params);
         // Set up a few basic things. We are not complete after this though.
         version = 1;
-        difficultyTarget = 0x1d07fff8L;
+        difficultyTarget = 0x1e0fffffL;
         time = System.currentTimeMillis() / 1000;
         prevBlockHash = Sha256Hash.ZERO_HASH;
+        hashWholeBlock = null;
+        minerSignature = null;
+        height = -1;
 
-        length = 80;
+        length = 88;
     }
 
     /** Constructs a block object from the Bitcoin wire format. */
@@ -145,13 +158,14 @@ public class Block extends Message {
      * @param transactions List of transactions including the coinbase.
      */
     public Block(NetworkParameters params, long version, Sha256Hash prevBlockHash, Sha256Hash merkleRoot, long time,
-                 long difficultyTarget, long nonce, List<Transaction> transactions) {
+                 long difficultyTarget, long height, long nonce, List<Transaction> transactions) {
         super(params);
         this.version = version;
         this.prevBlockHash = prevBlockHash;
         this.merkleRoot = merkleRoot;
         this.time = time;
         this.difficultyTarget = difficultyTarget;
+        this.height = height;
         this.nonce = nonce;
         this.transactions = new LinkedList<Transaction>();
         this.transactions.addAll(transactions);
@@ -167,8 +181,21 @@ public class Block extends Message {
      * <p>The half-life is controlled by {@link org.spreadcoinj.core.NetworkParameters#getSubsidyDecreaseBlockCount()}.
      * </p>
      */
+
+    // static int g_RewardHalvingPeriod = 2000000;
     public Coin getBlockInflation(int height) {
-        return FIFTY_COINS.shiftRight(height / params.getSubsidyDecreaseBlockCount());
+        Coin nSubsidy = Coin.FIFTY_COINS.multiply(4).divide(3);
+        if (height > params.getFirstHardforkBlock())
+            nSubsidy = nSubsidy.divide(10);
+
+
+        // Subsidy is cut in half every g_RewardHalvingPeriod blocks which will occur approximately every 4 years.
+//        int halvings = height / g_RewardHalvingPeriod;
+//        nSubsidy = (halvings >= 64)? 0 : (nSubsidy >> halvings);
+        nSubsidy = nSubsidy.shiftRight(height / params.getSubsidyDecreaseBlockCount());
+
+//        nSubsidy -= nSubsidy*(height % g_RewardHalvingPeriod)/(2*g_RewardHalvingPeriod);
+        return nSubsidy.subtract(nSubsidy.multiply(height % params.getSubsidyDecreaseBlockCount()).divide(2*params.getSubsidyDecreaseBlockCount()));
     }
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
@@ -176,6 +203,10 @@ public class Block extends Message {
         // This code is not actually necessary, as transient fields are initialized to the default value which is in
         // this case null. However it clears out a FindBugs warning and makes it explicit what we're doing.
         hash = null;
+    }
+
+    public int getHeaderSize() {
+        return height > params.getSecondHardforkBlock() ? HEADER_SIZE_NEW : HEADER_SIZE_OLD;
     }
 
     private void parseHeader() throws ProtocolException {
@@ -186,9 +217,14 @@ public class Block extends Message {
         version = readUint32();
         prevBlockHash = readHash();
         merkleRoot = readHash();
-        time = readUint32();
+        time = readUint64().longValue();
         difficultyTarget = readUint32();
+        height =readUint32();
         nonce = readUint32();
+        if (height > params.getSecondHardforkBlock()) {
+            hashWholeBlock = readHash();
+            minerSignature = readMinerSignature();
+        }
 
         hash = new Sha256Hash(Utils.reverseBytes(Utils.doubleDigest(payload, offset, cursor)));
 
@@ -200,8 +236,8 @@ public class Block extends Message {
         if (transactionsParsed)
             return;
 
-        cursor = offset + HEADER_SIZE;
-        optimalEncodingMessageSize = HEADER_SIZE;
+        cursor = offset + getHeaderSize();
+        optimalEncodingMessageSize = getHeaderSize();
         if (payload.length == cursor) {
             // This message is just a header, it has no transactions.
             transactionsParsed = true;
@@ -254,9 +290,10 @@ public class Block extends Message {
             parseTransactions();
             length = cursor - offset;
         } else {
-            transactionBytesValid = !transactionsParsed || parseRetain && length > HEADER_SIZE;
+            transactionBytesValid = !transactionsParsed || parseRetain && length > getHeaderSize();
         }
-        headerBytesValid = !headerParsed || parseRetain && length >= HEADER_SIZE;
+        headerBytesValid = !headerParsed || parseRetain && length >= getHeaderSize();
+        height = getUint32(Block.HEADER_POS_HEIGHT);
     }
 
     /*
@@ -377,8 +414,8 @@ public class Block extends Message {
     // default for testing
     void writeHeader(OutputStream stream) throws IOException {
         // try for cached write first
-        if (headerBytesValid && payload != null && payload.length >= offset + HEADER_SIZE) {
-            stream.write(payload, offset, HEADER_SIZE);
+        if (headerBytesValid && payload != null && payload.length >= offset + getHeaderSize()) {
+            stream.write(payload, offset, getHeaderSize());
             return;
         }
         // fall back to manual write
@@ -386,9 +423,14 @@ public class Block extends Message {
         Utils.uint32ToByteStreamLE(version, stream);
         stream.write(Utils.reverseBytes(prevBlockHash.getBytes()));
         stream.write(Utils.reverseBytes(getMerkleRoot().getBytes()));
-        Utils.uint32ToByteStreamLE(time, stream);
+        Utils.int64ToByteStreamLE(time, stream);
         Utils.uint32ToByteStreamLE(difficultyTarget, stream);
+        Utils.uint32ToByteStreamLE(height, stream);
         Utils.uint32ToByteStreamLE(nonce, stream);
+        if (height > params.getSecondHardforkBlock()) {
+            stream.write(Utils.reverseBytes(hashWholeBlock.getBytes()));
+            stream.write(minerSignature.getBytes());
+        }
     }
 
     private void writeTransactions(OutputStream stream) throws IOException {
@@ -400,7 +442,7 @@ public class Block extends Message {
 
         // confirmed we must have transactions either cached or as objects.
         if (transactionBytesValid && payload != null && payload.length >= offset + length) {
-            stream.write(payload, offset + HEADER_SIZE, length - HEADER_SIZE);
+            stream.write(payload, offset + getHeaderSize(), length - getHeaderSize());
             return;
         }
 
@@ -435,7 +477,7 @@ public class Block extends Message {
 
         // At least one of the two cacheable components is invalid
         // so fall back to stream write since we can't be sure of the length.
-        ByteArrayOutputStream stream = new UnsafeByteArrayOutputStream(length == UNKNOWN_LENGTH ? HEADER_SIZE + guessTransactionsLength() : length);
+        ByteArrayOutputStream stream = new UnsafeByteArrayOutputStream(length == UNKNOWN_LENGTH ? getHeaderSize() + guessTransactionsLength() : length);
         try {
             writeHeader(stream);
             writeTransactions(stream);
@@ -462,7 +504,7 @@ public class Block extends Message {
      */
     private int guessTransactionsLength() {
         if (transactionBytesValid)
-            return payload.length - HEADER_SIZE;
+            return payload.length - getHeaderSize();
         if (transactions == null)
             return 0;
         int len = VarInt.sizeOf(transactions.size());
@@ -508,9 +550,23 @@ public class Block extends Message {
      */
     private Sha256Hash calculateHash() {
         try {
-            ByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(HEADER_SIZE);
+            ByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(getHeaderSize());
             writeHeader(bos);
             return new Sha256Hash(Utils.reverseBytes(doubleDigest(bos.toByteArray())));
+        } catch (IOException e) {
+            throw new RuntimeException(e); // Cannot happen.
+        }
+    }
+
+    /**
+     * Calculates the block hash by serializing the block and hashing the
+     * resulting bytes.
+     */
+    private Sha256Hash calculatePoWHash() {
+        try {
+            ByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(getHeaderSize());
+            writeHeader(bos);
+            return new Sha256Hash(Utils.reverseBytes(x11Digest(bos.toByteArray())));
         } catch (IOException e) {
             throw new RuntimeException(e); // Cannot happen.
         }
@@ -524,7 +580,9 @@ public class Block extends Message {
     public String getHashAsString() {
         return getHash().toString();
     }
-
+    public String getPoWHashAsString() {
+        return getPoWHash().toString();
+    }
     /**
      * Returns the hash of the block (which for a valid, solved block should be
      * below the target). Big endian.
@@ -535,7 +593,11 @@ public class Block extends Message {
             hash = calculateHash();
         return hash;
     }
-
+    public Sha256Hash getPoWHash() {
+        if (powHash == null)
+            powHash = calculatePoWHash();
+        return powHash;
+    }
     /**
      * The number that is one greater than the largest representable SHA-256
      * hash.
@@ -565,8 +627,11 @@ public class Block extends Message {
         block.version = version;
         block.time = time;
         block.difficultyTarget = difficultyTarget;
+        block.height = height;
         block.transactions = null;
         block.hash = getHash().duplicate();
+        block.hashWholeBlock = hashWholeBlock != null ? hashWholeBlock.duplicate() : null;
+        block.minerSignature = minerSignature != null ? minerSignature.duplicate() : null;
         return block;
     }
 
@@ -593,8 +658,17 @@ public class Block extends Message {
         s.append("   difficulty target (nBits): ");
         s.append(difficultyTarget);
         s.append("\n");
+        s.append("   height: ");
+        s.append(height);
+        s.append("\n");
         s.append("   nonce: ");
         s.append(nonce);
+        s.append("\n");
+        s.append("   minerSignature: ");
+        s.append(minerSignature);
+        s.append("\n");
+        s.append("   hashWholeBlock: ");
+        s.append(hashWholeBlock);
         s.append("\n");
         if (transactions != null && transactions.size() > 0) {
             s.append("   with ").append(transactions.size()).append(" transaction(s):\n");
@@ -652,7 +726,7 @@ public class Block extends Message {
         // field is of the right value. This requires us to have the preceeding blocks.
         BigInteger target = getDifficultyTargetAsInteger();
 
-        BigInteger h = getHash().toBigInteger();
+        BigInteger h = getPoWHash().toBigInteger();
         if (h.compareTo(target) > 0) {
             // Proof of work check failed!
             if (throwException)
@@ -887,6 +961,7 @@ public class Block extends Message {
         unCacheHeader();
         this.prevBlockHash = prevBlockHash;
         this.hash = null;
+        this.powHash = null;
     }
 
     /**
@@ -909,6 +984,7 @@ public class Block extends Message {
         unCacheHeader();
         this.time = time;
         this.hash = null;
+        this.powHash = null;
     }
 
     /**
@@ -930,6 +1006,7 @@ public class Block extends Message {
         unCacheHeader();
         this.difficultyTarget = compactForm;
         this.hash = null;
+        this.powHash = null;
     }
 
     /**
@@ -946,6 +1023,25 @@ public class Block extends Message {
         unCacheHeader();
         this.nonce = nonce;
         this.hash = null;
+        this.powHash = null;
+    }
+
+    /**
+     * Returns the height, an arbitrary value that exists only to make the hash of the block header fall below the
+     * difficulty target.
+     */
+    public long getHeight() {
+        maybeParseHeader();
+        return height;
+    }
+
+    /** Sets the nonce and clears any cached data. */
+    public void setHeight(long height) {
+        unCacheHeader();
+        this.version = height > 0 ? 2 : 1;
+        this.height = height;
+        this.hash = null;
+        this.powHash = null;
     }
 
     /** Returns an immutable list of transactions held in this block. */
@@ -999,6 +1095,7 @@ public class Block extends Message {
     Block createNextBlock(@Nullable Address to, @Nullable TransactionOutPoint prevOut, long time,
                           byte[] pubKey, Coin coinbaseValue) {
         Block b = new Block(params);
+        b.setHeight(this.getHeight() + 1);
         b.setDifficultyTarget(difficultyTarget);
         b.addCoinbaseTransaction(pubKey, coinbaseValue);
 

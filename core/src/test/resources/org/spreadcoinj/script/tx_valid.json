@@ -5,6 +5,10 @@
 ["serializedTransaction, verifyFlags]"],
 ["Objects that are only a single string (like this one) are ignored"],
 
+["Standard spreadcoin transaction"]
+[[["4f540b2a801b7ace9b4a1b1f4aead7557de5c35cd9124c6eb10b02125e6c90e7", 0, "0x14 0x2453ba9bf1759e6bec975d2183c613d2ec47273d CHECKSIG"]],
+"0100000001e7906c5e12020bb16e4c12d95cc3e57d55d7ea4a1f1b4a9bce7a1b802a0b544f0000000043421c6757377026984e1067dd1a4bde326d1ff7f8d80a5d7a937585e5c62382a3af97ac6c2c5d77d70cfdd70cdf39ffabe2bb367a83002b0af22dbeb8bf2a9d6d3f3d01ffffffff0280098d250000000016140be006a3ccb419f722e559065625f98e5a8003e5ac585a3400000000001614ef72e062bf0dedcca5a668b0fb1a843e5cfca99eac00000000", "P2SH"],
+
 ["The following is 23b397edccd3740a74adb603c9756370fafcde9bcc4483eb271ecad09a94dd63"],
 ["It is of particular interest because it contains an invalidly-encoded signature which OpenSSL accepts"],
 ["See http://r6.ca/blog/20111119T211504Z.html"],

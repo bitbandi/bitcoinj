@@ -40,8 +40,8 @@ public class StoredBlock implements Serializable {
     // A BigInteger representing the total amount of work done so far on this chain. As of May 2011 it takes 8
     // bytes to represent this field, so 12 bytes should be plenty for now.
     public static final int CHAIN_WORK_BYTES = 12;
-    public static final byte[] EMPTY_BYTES = new byte[CHAIN_WORK_BYTES];
-    public static final int COMPACT_SERIALIZED_SIZE = Block.HEADER_SIZE + CHAIN_WORK_BYTES + 4;  // for height
+    public static final byte[] EMPTY_BYTES = new byte[Block.HEADER_SIZE_NEW];
+    public static final int COMPACT_SERIALIZED_SIZE = Block.HEADER_SIZE_NEW + CHAIN_WORK_BYTES + 4;  // for height
 
     private Block header;
     private BigInteger chainWork;
@@ -131,7 +131,11 @@ public class StoredBlock implements Serializable {
         // Using unsafeBitcoinSerialize here can give us direct access to the same bytes we read off the wire,
         // avoiding serialization round-trips.
         byte[] bytes = getHeader().unsafeBitcoinSerialize();
-        buffer.put(bytes, 0, Block.HEADER_SIZE);  // Trim the trailing 00 byte (zero transactions).
+        int size = getHeader().getHeaderSize();
+        buffer.put(bytes, 0, size);  // Trim the trailing 00 byte (zero transactions).
+        if (size < Block.HEADER_SIZE_NEW) {
+            buffer.put(EMPTY_BYTES, 0, Block.HEADER_SIZE_NEW - size);
+        }
     }
 
     /** De-serializes the stored block from a custom packed format. Used by {@link CheckpointManager}. */
@@ -140,8 +144,8 @@ public class StoredBlock implements Serializable {
         buffer.get(chainWorkBytes);
         BigInteger chainWork = new BigInteger(1, chainWorkBytes);
         int height = buffer.getInt();  // +4 bytes
-        byte[] header = new byte[Block.HEADER_SIZE + 1];    // Extra byte for the 00 transactions length.
-        buffer.get(header, 0, Block.HEADER_SIZE);
+        byte[] header = new byte[Block.HEADER_SIZE_NEW + 1];    // Extra byte for the 00 transactions length.
+        buffer.get(header, 0, Block.HEADER_SIZE_NEW);
         return new StoredBlock(new Block(params, header), chainWork, height);
     }
 

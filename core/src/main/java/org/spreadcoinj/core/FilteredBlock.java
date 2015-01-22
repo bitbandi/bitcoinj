@@ -57,13 +57,19 @@ public class FilteredBlock extends Message {
 
     @Override
     void parse() throws ProtocolException {
-        byte[] headerBytes = new byte[Block.HEADER_SIZE];
-        System.arraycopy(payload, 0, headerBytes, 0, Block.HEADER_SIZE);
+        long height = getUint32(Block.HEADER_POS_HEIGHT);
+        byte[] headerBytes;
+        if (height > params.getSecondHardforkBlock()) {
+            headerBytes = new byte[Block.HEADER_SIZE_NEW];
+        } else {
+            headerBytes = new byte[Block.HEADER_SIZE_OLD];
+        }
+        System.arraycopy(payload, 0, headerBytes, 0, headerBytes.length);
         header = new Block(params, headerBytes);
         
-        merkleTree = new PartialMerkleTree(params, payload, Block.HEADER_SIZE);
+        merkleTree = new PartialMerkleTree(params, payload, headerBytes.length);
         
-        length = Block.HEADER_SIZE + merkleTree.getMessageSize();
+        length = header.getHeaderSize() + merkleTree.getMessageSize();
     }
     
     @Override

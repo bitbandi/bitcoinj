@@ -30,29 +30,27 @@ public class TestNetParams extends NetworkParameters {
     public TestNetParams() {
         super();
         id = ID_TESTNET;
-        // Genesis hash is 000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943
-        packetMagic = 0x0b110907;
+        // Genesis hash is ?
+        packetMagic = 0xc2e3cbfa;
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
-        maxTarget = Utils.decodeCompactBits(0x1d00ffffL);
-        port = 18333;
+        maxTarget = Utils.decodeCompactBits(0x1e0fffffL);
+        port = 51678;
         addressHeader = 111;
         p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
         dumpedPrivateKeyHeader = 239;
-        genesisBlock.setTime(1296688602L);
-        genesisBlock.setDifficultyTarget(0x1d00ffffL);
-        genesisBlock.setNonce(414098458);
+        genesisBlock.setTime(1406620000L); // real: 1406620000L
+        genesisBlock.setDifficultyTarget(0x1e0fffffL);
+        genesisBlock.setNonce(0);
+        genesisBlock.setHeight(0);
         spendableCoinbaseDepth = 100;
-        subsidyDecreaseBlockCount = 210000;
+        subsidyDecreaseBlockCount = 2000000;
         String genesisHash = genesisBlock.getHashAsString();
-        checkState(genesisHash.equals("000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"));
-        alertSigningKey = Utils.HEX.decode("04302390343f91cc401d56d68b123028bf52e5fca1939df127f63c6467cdf9c8e2c14b61104cf817d0b780da337893ecc4aaff1309e536162dabbdb45200ca2b0a");
+        checkState(genesisHash.equals("14dcedae9369344e0542270805a0cef3213f2b17f693d9b2acec76c1b7ed7fa3"));
+        alertSigningKey = Utils.HEX.decode("03f5cee48df4990af166d539f1cc42367034558d62e765a30ed3228ec418cc46bb");
 
         dnsSeeds = new String[] {
-                "testnet-seed.alexykot.me",           // Alex Kotenko
-                "testnet-seed.bitcoin.schildbach.de", // Andreas Schildbach
-                "testnet-seed.bitcoin.petertodd.org"  // Peter Todd
         };
 
         firstHardforkBlock = 0;

@@ -966,6 +966,7 @@ public class FullBlockTestGenerator {
         // A block with a non-coinbase as the first tx
         Block b45 = new Block(params);
         {
+            b45.setHeight(45);
             b45.setDifficultyTarget(b44.getDifficultyTarget());
             //b45.addCoinbaseTransaction(pubKey, coinbaseValue);
             
@@ -1009,7 +1010,7 @@ public class FullBlockTestGenerator {
                 // Inverse solve
                 BigInteger target = b47.getDifficultyTargetAsInteger();
                 while (true) {
-                    BigInteger h = b47.getHash().toBigInteger();
+                    BigInteger h = b47.getPoWHash().toBigInteger();
                     if (h.compareTo(target) > 0) // if invalid
                         break;
                     // increment the nonce and try again.

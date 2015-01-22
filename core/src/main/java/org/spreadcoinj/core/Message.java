@@ -397,6 +397,15 @@ public abstract class Message implements Serializable {
         return length;
     }
 
+    long getUint32(int offset) throws ProtocolException {
+        try {
+            long u = Utils.readUint32(payload, cursor + offset);
+            return u;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new ProtocolException(e);
+        }
+    }
+
     long readUint32() throws ProtocolException {
         try {
             long u = Utils.readUint32(payload, cursor);
@@ -416,6 +425,17 @@ public abstract class Message implements Serializable {
             hash = Utils.reverseBytes(hash);
             cursor += 32;
             return new Sha256Hash(hash);
+        } catch (IndexOutOfBoundsException e) {
+            throw new ProtocolException(e);
+        }
+    }
+
+    MinerSignature readMinerSignature() {
+        try {
+            byte[] hash = new byte[65];
+            System.arraycopy(payload, cursor, hash, 0, 65);
+            cursor += 65;
+            return new MinerSignature(hash);
         } catch (IndexOutOfBoundsException e) {
             throw new ProtocolException(e);
         }

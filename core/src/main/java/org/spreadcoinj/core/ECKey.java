@@ -819,6 +819,29 @@ public class ECKey implements EncryptableItem, Serializable {
         return key;
     }
 
+    public static ECKey signedToKey(Sha256Hash hash, byte[] signatureEncoded, boolean compressed) throws SignatureException {
+        // Parse the signature bytes into r/s and the selector value.
+        if (signatureEncoded.length < 65)
+            throw new SignatureException("Signature truncated, expected 65 bytes and got " + signatureEncoded.length);
+        int header = signatureEncoded[0] & 0xFF;
+        // The header byte: 0x1B = first key with even y, 0x1C = first key with odd y,
+        //                  0x1D = second key with even y, 0x1E = second key with odd y
+        if (header < 27 || header > 34)
+            throw new SignatureException("Header byte out of range: " + header);
+        BigInteger r = new BigInteger(1, Arrays.copyOfRange(signatureEncoded, 1, 33));
+        BigInteger s = new BigInteger(1, Arrays.copyOfRange(signatureEncoded, 33, 65));
+        ECDSASignature sig = new ECDSASignature(r, s);
+        if (header >= 31) {
+            compressed = true;
+            header -= 4;
+        }
+        int recId = header - 27;
+        ECKey key = ECKey.recoverFromSignature(recId, sig, hash, compressed);
+        if (key == null)
+            throw new SignatureException("Could not recover public key from signature");
+        return key;
+    }
+
     /**
      * Convenience wrapper around {@link ECKey#signedMessageToKey(String, String)}. If the key derived from the
      * signature is not the same as this one, throws a SignatureException.

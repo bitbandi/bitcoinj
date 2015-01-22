@@ -36,6 +36,7 @@ public class UnitTestParams extends NetworkParameters {
         maxTarget = new BigInteger("00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16);
         genesisBlock.setTime(System.currentTimeMillis() / 1000);
         genesisBlock.setDifficultyTarget(Block.EASIEST_DIFFICULTY_TARGET);
+        genesisBlock.setHeight(0);
         genesisBlock.solve();
         port = 18333;
         interval = 10;
