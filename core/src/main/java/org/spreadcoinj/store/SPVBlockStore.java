@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -203,6 +204,11 @@ public class SPVBlockStore implements BlockStore {
             final int startingPoint = cursor;
             final int fileSize = getFileSize();
             final byte[] targetHashBytes = hash.getBytes();
+            if (Arrays.equals(new byte[32], targetHashBytes)) { // "0000000000000000000000000000000000000000000000000000000000000000" block
+                StoredBlock storedBlock = new StoredBlock(new Block(params, new byte[88]), new BigInteger(1, new byte[1]), 0);
+                blockCache.put(hash, storedBlock);
+                return storedBlock;
+            }
             byte[] scratch = new byte[32];
             do {
                 cursor -= RECORD_SIZE;
