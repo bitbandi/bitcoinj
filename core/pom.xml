@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.spreadcoinj</groupId>
         <artifactId>spreadcoinj-parent</artifactId>
-        <version>0.12.2</version>
+        <version>0.12.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>spreadcoinj-core</artifactId>
