@@ -35,6 +35,10 @@ public class RegTestParams extends TestNetParams {
         subsidyDecreaseBlockCount = 150;
         port = 18444;
         id = ID_REGTEST;
+
+        firstHardforkBlock = Integer.MAX_VALUE;
+        secondHardforkBlock = Integer.MAX_VALUE;
+
     }
 
     @Override

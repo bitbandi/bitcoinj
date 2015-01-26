@@ -42,7 +42,7 @@ public class AddressTest {
         assertFalse(a.isP2SHAddress());
 
         Address b = new Address(mainParams, HEX.decode("4a22c3c4cbb31e4d03b15550636762bda0baf85a"));
-        assertEquals("17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL", b.toString());
+        assertEquals("SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e", b.toString());
         assertFalse(b.isP2SHAddress());
     }
     
@@ -51,7 +51,7 @@ public class AddressTest {
         Address a = new Address(testParams, "n4eA2nbYqErp7H6jebchxAN59DmNpksexv");
         assertEquals("fda79a24e50ff70ff42f7d89585da5bd19d9e5cc", Utils.HEX.encode(a.getHash160()));
 
-        Address b = new Address(mainParams, "17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL");
+        Address b = new Address(mainParams, "SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e");
         assertEquals("4a22c3c4cbb31e4d03b15550636762bda0baf85a", Utils.HEX.encode(b.getHash160()));
     }
     
@@ -79,7 +79,7 @@ public class AddressTest {
 
         // Check the case of a mismatched network.
         try {
-            new Address(testParams, "17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL");
+            new Address(testParams, "SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e");
             fail();
         } catch (WrongNetworkException e) {
             // Success.
@@ -92,7 +92,7 @@ public class AddressTest {
 
     @Test
     public void getNetwork() throws Exception {
-        NetworkParameters params = Address.getParametersFromAddress("17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL");
+        NetworkParameters params = Address.getParametersFromAddress("SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e");
         assertEquals(MainNetParams.get().getId(), params.getId());
         params = Address.getParametersFromAddress("n4eA2nbYqErp7H6jebchxAN59DmNpksexv");
         assertEquals(TestNetParams.get().getId(), params.getId());
@@ -117,7 +117,7 @@ public class AddressTest {
         NetworkParameters params = Address.getParametersFromAddress("LLxSnHLN2CYyzB5eWTR9K9rS9uWtbTQFb6");
         assertEquals(altNetwork.getId(), params.getId());
         // Check if main network works as before
-        params = Address.getParametersFromAddress("17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL");
+        params = Address.getParametersFromAddress("SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e");
         assertEquals(MainNetParams.get().getId(), params.getId());
         // Unregister network
         Networks.unregister(altNetwork);
@@ -156,11 +156,11 @@ public class AddressTest {
     @Test
     public void p2shAddressCreationFromKeys() throws Exception {
         // import some keys from this example: https://gist.github.com/gavinandresen/3966071
-        ECKey key1 = new DumpedPrivateKey(mainParams, "5JaTXbAUmfPYZFRwrYaALK48fN6sFJp4rHqq2QSXs8ucfpE4yQU").getKey();
+        ECKey key1 = new DumpedPrivateKey(mainParams, "7R3MeCSVTTzp3w3Ny4g7RWpvMYu7CfuERZJcPqn1VRL3kyV9A2p").getKey();
         key1 = ECKey.fromPrivate(key1.getPrivKeyBytes());
-        ECKey key2 = new DumpedPrivateKey(mainParams, "5Jb7fCeh1Wtm4yBBg3q3XbT6B525i17kVhy3vMC9AqfR6FH2qGk").getKey();
+        ECKey key2 = new DumpedPrivateKey(mainParams, "7R41movhhKW2ZencnZvzcoDssFpKfNCv4yRqHnXco85rBLN1C2D").getKey();
         key2 = ECKey.fromPrivate(key2.getPrivKeyBytes());
-        ECKey key3 = new DumpedPrivateKey(mainParams, "5JFjmGo5Fww9p8gvx48qBYDJNAzR9pmH5S389axMtDyPT8ddqmw").getKey();
+        ECKey key3 = new DumpedPrivateKey(mainParams, "7Qidst55wkYRJpJN4aEnGjz64Mnf7BrSehVuX2HqWWPpYNEkqQJ").getKey();
         key3 = ECKey.fromPrivate(key3.getPrivKeyBytes());
 
         List<ECKey> keys = Arrays.asList(key1, key2, key3);

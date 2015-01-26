@@ -40,14 +40,14 @@ public class TestNetParams extends NetworkParameters {
         p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
         dumpedPrivateKeyHeader = 239;
-        genesisBlock.setTime(1406620000L); // real: 1406620000L
+        genesisBlock.setTime(1406620001L);
         genesisBlock.setDifficultyTarget(0x1e0fffffL);
         genesisBlock.setNonce(0);
         genesisBlock.setHeight(0);
         spendableCoinbaseDepth = 100;
         subsidyDecreaseBlockCount = 2000000;
         String genesisHash = genesisBlock.getHashAsString();
-        checkState(genesisHash.equals("14dcedae9369344e0542270805a0cef3213f2b17f693d9b2acec76c1b7ed7fa3"));
+        checkState(genesisHash.equals("31d842d76615b7faa1c2f7a773260acd6aa1a3d5cf720fb2688b712f93337a0b"));
         alertSigningKey = Utils.HEX.decode("03f5cee48df4990af166d539f1cc42367034558d62e765a30ed3228ec418cc46bb");
 
         dnsSeeds = new String[] {

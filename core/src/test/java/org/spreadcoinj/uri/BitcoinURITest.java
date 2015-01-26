@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 public class BitcoinURITest {
     private BitcoinURI testObject = null;
 
-    private static final String MAINNET_GOOD_ADDRESS = "1KzTSfqjF2iKCduwz59nv2uqh1W2JsTxZH";
+    private static final String MAINNET_GOOD_ADDRESS = "SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e";
 
     @Test
     public void testConvertToBitcoinURI() throws Exception {
@@ -240,7 +240,7 @@ public class BitcoinURITest {
         testObject = new BitcoinURI(MainNetParams.get(), BitcoinURI.BITCOIN_SCHEME + ":" + MAINNET_GOOD_ADDRESS
                 + "?amount=6543210&label=Hello%20World&message=Be%20well");
         assertEquals(
-                "BitcoinURI['amount'='654321000000000','label'='Hello World','message'='Be well','address'='1KzTSfqjF2iKCduwz59nv2uqh1W2JsTxZH']",
+                "BitcoinURI['amount'='654321000000000','label'='Hello World','message'='Be well','address'='SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e']",
                 testObject.toString());
     }
 
@@ -317,7 +317,7 @@ public class BitcoinURITest {
         // Unknown not required field
         testObject = new BitcoinURI(MainNetParams.get(), BitcoinURI.BITCOIN_SCHEME + ":" + MAINNET_GOOD_ADDRESS
                 + "?aardvark=true");
-        assertEquals("BitcoinURI['aardvark'='true','address'='1KzTSfqjF2iKCduwz59nv2uqh1W2JsTxZH']", testObject.toString());
+        assertEquals("BitcoinURI['aardvark'='true','address'='SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e']", testObject.toString());
 
         assertEquals("true", (String) testObject.getParameterByName("aardvark"));
 
@@ -343,9 +343,9 @@ public class BitcoinURITest {
     @Test
     public void brokenURIs() throws BitcoinURIParseException {
         // Check we can parse the incorrectly formatted URIs produced by blockchain.info and its iPhone app.
-        String str = "bitcoin://1KzTSfqjF2iKCduwz59nv2uqh1W2JsTxZH?amount=0.01000000";
+        String str = "bitcoin://SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e?amount=0.01000000";
         BitcoinURI uri = new BitcoinURI(str);
-        assertEquals("1KzTSfqjF2iKCduwz59nv2uqh1W2JsTxZH", uri.getAddress().toString());
+        assertEquals("SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e", uri.getAddress().toString());
         assertEquals(CENT, uri.getAmount());
     }
 

@@ -416,7 +416,7 @@ public abstract class AbstractBlockChain {
                 return false;
             } else {
                 // It connects to somewhere on the chain. Not necessarily the top of the best known chain.
-                checkDifficultyTransitions(storedPrev, block);
+//                checkDifficultyTransitions(storedPrev, block);
                 connectBlock(block, storedPrev, shouldVerifyTransactions(), filteredTxHashList, filteredTxn);
             }
 

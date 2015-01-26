@@ -29,7 +29,7 @@ public class UnitTestParams extends NetworkParameters {
     public UnitTestParams() {
         super();
         id = ID_UNITTESTNET;
-        packetMagic = 0x0b110907;
+        packetMagic = 0xc2e3cbfa;
         addressHeader = 111;
         p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
@@ -45,6 +45,12 @@ public class UnitTestParams extends NetworkParameters {
         spendableCoinbaseDepth = 5;
         subsidyDecreaseBlockCount = 100;
         dnsSeeds = null;
+
+        firstHardforkBlock = 2200;
+        secondHardforkBlock = 43000;
+//        firstHardforkBlock = Integer.MAX_VALUE;
+//        secondHardforkBlock = Integer.MAX_VALUE;
+
     }
 
     private static UnitTestParams instance;

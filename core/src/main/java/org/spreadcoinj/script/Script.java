@@ -217,11 +217,11 @@ public class Script {
      */
     public boolean isSentToRawPubKey() {
         return chunks.size() == 2 && chunks.get(1).equalsOpCode(OP_CHECKSIG) &&
-               !chunks.get(0).isOpCode() && chunks.get(0).data.length > 1;
+               !chunks.get(0).isOpCode() && chunks.get(0).data.length != Address.LENGTH;
     }
 
     /**
-     * Returns true if this script is of the form DUP HASH160 <pubkey hash> EQUALVERIFY CHECKSIG, ie, payment to an
+     * Returns true if this script is of the form <pubkey hash> CHECKSIG, ie, payment to an
      * address like 1VayNert3x1KzbpzMGt2qdqrAThiRovi8. This form was originally intended for the case where you wish
      * to send somebody money with a written code because their node is offline, but over time has become the standard
      * way to make payments due to the short and recognizable base58 form addresses come in.
@@ -236,7 +236,7 @@ public class Script {
     }
 
     public boolean isSentToAddress() {
-        return chunks.size() == 2 &&
+        return chunks.size() == 2 && !chunks.get(0).isOpCode() &&
                 chunks.get(0).data.length == Address.LENGTH &&
                 chunks.get(1).equalsOpCode(OP_CHECKSIG);
     }
@@ -250,7 +250,7 @@ public class Script {
     }
 
     /**
-     * If a program matches the standard template DUP HASH160 <pubkey hash> EQUALVERIFY CHECKSIG
+     * If a program matches the standard template <pubkey hash> CHECKSIG
      * then this function retrieves the third element, otherwise it throws a ScriptException.<p>
      *
      * This is useful for fetching the destination address of a transaction.
@@ -448,7 +448,7 @@ public class Script {
         } else if (isSentToMultiSig()) {
             sigsPrefixCount = 1; // OP_0 <sig>*
         } else if (isSentToAddress()) {
-            sigsSuffixCount = 1; // <sig> <pubkey>
+            sigsSuffixCount = 0; // <sig>
         }
         return ScriptBuilder.updateScriptWithSignature(scriptSig, sigBytes, index, sigsPrefixCount, sigsSuffixCount);
     }
@@ -621,10 +621,14 @@ public class Script {
         } else if (isSentToRawPubKey()) {
             // scriptSig: <sig>
             return SIG_SIZE;
-        } else if (isSentToAddress()) {
+        } else if (isSentToAddressOld()) {
             // scriptSig: <sig> <pubkey>
             int uncompressedPubKeySize = 65;
             return SIG_SIZE + (pubKey != null ? pubKey.getPubKey().length : uncompressedPubKeySize);
+        } else if (isSentToAddress()) {
+            // scriptSig: <sig>
+            int uncompressedPubKeySize = 65;
+            return SIG_SIZE; // + (pubKey != null ? pubKey.getPubKey().length : uncompressedPubKeySize);
         } else {
             throw new IllegalStateException("Unsupported script type");
         }
@@ -1279,6 +1283,14 @@ public class Script {
         if (stack.size() < 2)
             throw new ScriptException("Attempted OP_CHECKSIG(VERIFY) on a stack with size < 2");
         byte[] pubKey = stack.pollLast();
+        if (pubKey.length == 20 && stack.getLast().length == 33) { // spreadcoin sign+pubkey+pubkeyhash
+            // make the DUP HASH160 x EQUALS here
+            if (stack.getLast().length < 70)
+                throw new ScriptException("bajvan!!!");
+            if (!Arrays.equals(Utils.sha256hash160(stack.getLast()), pubKey))
+                throw new ScriptException("OP_CHECKSIG(VERIFY): non-equal data");
+            pubKey = stack.pollLast();
+        }
         byte[] sigBytes = stack.pollLast();
 
         byte[] prog = script.getProgram();

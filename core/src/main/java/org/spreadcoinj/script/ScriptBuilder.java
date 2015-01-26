@@ -131,10 +131,10 @@ public class ScriptBuilder {
         } else {
             // OP_DUP OP_HASH160 <pubKeyHash> OP_EQUALVERIFY OP_CHECKSIG
             return new ScriptBuilder()
-                .op(OP_DUP)
-                .op(OP_HASH160)
+//                .op(OP_DUP)
+//                .op(OP_HASH160)
                 .data(to.getHash160())
-                .op(OP_EQUALVERIFY)
+//                .op(OP_EQUALVERIFY)
                 .op(OP_CHECKSIG)
                 .build();
         }
@@ -152,7 +152,7 @@ public class ScriptBuilder {
     public static Script createInputScript(@Nullable TransactionSignature signature, ECKey pubKey) {
         byte[] pubkeyBytes = pubKey.getPubKey();
         byte[] sigBytes = signature != null ? signature.encodeToBitcoin() : new byte[]{};
-        return new ScriptBuilder().data(sigBytes).data(pubkeyBytes).build();
+        return new ScriptBuilder().data(sigBytes).build();
     }
 
     /**

@@ -87,10 +87,10 @@ public class Address extends VersionedChecksummedBytes {
     /**
      * Construct an address from parameters and the standard "human readable" form. Example:<p>
      *
-     * <pre>new Address(NetworkParameters.prodNet(), "17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL");</pre><p>
+     * <pre>new Address(NetworkParameters.prodNet(), "SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e");</pre><p>
      *
      * @param params The expected NetworkParameters or null if you don't want validation.
-     * @param address The textual form of the address, such as "17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL"
+     * @param address The textual form of the address, such as "SU3zgXqWs3FLnZi5mRRjgHt93TDDyhT52e"
      * @throws AddressFormatException if the given address doesn't parse or the checksum is invalid
      * @throws WrongNetworkException if the given address is valid but for a different chain (eg testnet vs prodnet)
      */

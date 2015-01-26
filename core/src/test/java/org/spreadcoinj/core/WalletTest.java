@@ -17,6 +17,7 @@
 
 package org.spreadcoinj.core;
 
+import org.junit.Ignore;
 import org.spreadcoinj.core.Wallet.SendRequest;
 import org.spreadcoinj.crypto.*;
 import org.spreadcoinj.script.Script;
@@ -1547,7 +1548,7 @@ public class WalletTest extends TestWithWallet {
         new Random().nextBytes(bits);
         Coin v = CENT;
         // 3100 outputs to a random address.
-        for (int i = 0; i < 3100; i++) {
+        for (int i = 0; i < 3230; i++) {
             tx.addOutput(v, new Address(params, bits));
         }
         Wallet.SendRequest req = Wallet.SendRequest.forTx(tx);
@@ -1606,6 +1607,7 @@ public class WalletTest extends TestWithWallet {
         wallet.completeTx(request);
     }
 
+    @Ignore // no dust in spreadcoin
     @Test(expected = Wallet.DustySendRequested.class)
     public void sendDustTest() throws InsufficientMoneyException {
         // Tests sending dust, should throw DustySendRequested.
@@ -1642,6 +1644,7 @@ public class WalletTest extends TestWithWallet {
         wallet.completeTx(request);
     }
 
+    @Ignore // no dust in spreadcoin
     @Test(expected = Wallet.DustySendRequested.class)
     public void sendDustAndMessageWithValueTest() throws Exception {
         //Tests sending dust and OP_RETURN with value, should throw DustySendRequested

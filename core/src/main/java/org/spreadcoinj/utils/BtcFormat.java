@@ -95,7 +95,7 @@ import java.util.regex.Pattern;
  * values of {@link BtcAutoFormat.Style}.  There are two styles constants: {@link
  * BtcAutoFormat.Style#CODE} (the default), and {@link BtcAutoFormat.Style#SYMBOL}.  The
  * difference is that the <code>CODE</code> style uses an internationally-distinct currency
- * code, such as <code>"BTC"</code>, to indicate the units of denomination, while the
+ * code, such as <code>"SPR"</code>, to indicate the units of denomination, while the
  * <code>SYMBOL</code> style uses a possibly-ambiguous currency symbol such as
  * <code>"฿"</code>.
  *
@@ -491,8 +491,8 @@ public abstract class BtcFormat extends Format {
      * comparisons.
      */
 
-    /** The conventional international currency code for bitcoins: "BTC" */
-    private static final String COIN_CODE = "BTC";
+    /** The conventional international currency code for bitcoins: "SPR" */
+    private static final String COIN_CODE = "SPR";
     /** The default currency symbols for bitcoins */
     private static final String COIN_SYMBOL = "฿";
     /** An alternative currency symbol to use in locales where the default symbol is used for the national currency. */
@@ -774,7 +774,7 @@ public abstract class BtcFormat extends Format {
 
     /**
      * Return a new auto-denominating instance that will indicate units using a currency
-     * code, for example, <code>"BTC"</code>.  Formatting and parsing will be done
+     * code, for example, <code>"SPR"</code>.  Formatting and parsing will be done
      * according to the default locale.
      */
     public static BtcFormat getCodeInstance() { return getCodeInstance(defaultLocale()); }
@@ -794,7 +794,7 @@ public abstract class BtcFormat extends Format {
     /**
      * Return a new code-style auto-formatter with the given number of fractional decimal
      * places.  Denominational units will be indicated using a currency code, for example,
-     * <code>"BTC"</code>.  The returned object will format the fraction-part of numbers using
+     * <code>"SPR"</code>.  The returned object will format the fraction-part of numbers using
      * the given number of decimal places, or fewer as necessary to avoid giving a place to
      * fractional satoshis.  Formatting and parsing will be done according to the default
      * locale.

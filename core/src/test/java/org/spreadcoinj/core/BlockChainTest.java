@@ -54,6 +54,12 @@ public class BlockChainTest {
     private Transaction coinbaseTransaction;
 
     private static class TweakableTestNet2Params extends TestNetParams {
+        public void setFirstHardforkBlock(int height) {
+            firstHardforkBlock = height;
+        }
+        public void setSecondHardforkBlock(int height) {
+            secondHardforkBlock = height;
+        }
         public void setMaxTarget(BigInteger limit) {
             maxTarget = limit;
         }
@@ -383,6 +389,7 @@ public class BlockChainTest {
     }
 
     private static Block getBlock1() throws Exception {
+        testNet.setSecondHardforkBlock(Integer.MAX_VALUE);
         Block b1 = new Block(testNet);
         b1.setMerkleRoot(new Sha256Hash("ab9df16bbb50b4a49d0a07026044b35f0cf91d35c351065e0d4c7c10dfe3027d"));
         b1.setHeight(1);

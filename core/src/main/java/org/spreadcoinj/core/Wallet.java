@@ -2527,7 +2527,7 @@ public class Wallet extends BaseTaggableObject implements Serializable, BlockCha
             StringBuilder builder = new StringBuilder();
             Coin estimatedBalance = getBalance(BalanceType.ESTIMATED);
             Coin availableBalance = getBalance(BalanceType.AVAILABLE);
-            builder.append(String.format("Wallet containing %s BTC (available: %s BTC) in:%n",
+            builder.append(String.format("Wallet containing %s SPR (available: %s SPR) in:%n",
                     estimatedBalance.toPlainString(), availableBalance.toPlainString()));
             builder.append(String.format("  %d pending transactions%n", pending.size()));
             builder.append(String.format("  %d unspent transactions%n", unspent.size()));
@@ -3041,7 +3041,7 @@ public class Wallet extends BaseTaggableObject implements Serializable, BlockCha
          * If you want to modify the default fee for your entire app without having to change each SendRequest you make,
          * you can do it here. This is primarily useful for unit tests.
          */
-        public static Coin DEFAULT_FEE_PER_KB = Transaction.REFERENCE_DEFAULT_MIN_TX_FEE;
+        public static Coin DEFAULT_FEE_PER_KB = Coin.ZERO;
 
         /**
          * <p>Requires that there be enough fee for a default reference client to at least relay the transaction.

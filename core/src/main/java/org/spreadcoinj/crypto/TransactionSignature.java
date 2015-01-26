@@ -44,13 +44,13 @@ public class TransactionSignature extends ECKey.ECDSASignature {
 
     /** Constructs a signature with the given components and raw sighash flag bytes (needed for rule compatibility). */
     public TransactionSignature(BigInteger r, BigInteger s, int sighashFlags) {
-        super(r, s);
+        super(r, s, 0);
         this.sighashFlags = sighashFlags;
     }
 
     /** Constructs a transaction signature based on the ECDSA signature. */
     public TransactionSignature(ECKey.ECDSASignature signature, Transaction.SigHash mode, boolean anyoneCanPay) {
-        super(signature.r, signature.s);
+        super(signature.r, signature.s, signature.headerByte);
         sighashFlags = calcSigHashValue(mode, anyoneCanPay);
     }
 
@@ -141,7 +141,7 @@ public class TransactionSignature extends ECKey.ECDSASignature {
      */
     public byte[] encodeToBitcoin() {
         try {
-            ByteArrayOutputStream bos = derByteStream();
+            ByteArrayOutputStream bos = compactByteStream();
             bos.write(sighashFlags);
             return bos.toByteArray();
         } catch (IOException e) {

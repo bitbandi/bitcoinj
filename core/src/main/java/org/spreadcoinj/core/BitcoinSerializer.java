@@ -138,8 +138,8 @@ public class BitcoinSerializer {
     public Message deserialize(ByteBuffer in) throws ProtocolException, IOException {
         // A Bitcoin protocol message has the following format.
         //
-        //   - 4 byte magic number: 0xfabfb5da for the testnet or
-        //                          0xf9beb4d9 for production
+        //   - 4 byte magic number: 0xc2e3cbfa for the testnet or
+        //                          0x4f3c5cbb for production
         //   - 12 byte command in ASCII
         //   - 4 byte payload size
         //   - 4 byte checksum

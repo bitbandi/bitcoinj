@@ -29,28 +29,23 @@ import static org.spreadcoinj.core.Utils.HEX;
 import static org.junit.Assert.*;
 
 public class BitcoinSerializerTest {
-    private final byte[] addrMessage = HEX.decode("f9beb4d96164647200000000000000001f000000" +
+    private final byte[] addrMessage = HEX.decode("4f3c5cbb6164647200000000000000001f000000" +
             "ed52399b01e215104d010000000000000000000000000000000000ffff0a000001208d");
 
     private final byte[] txMessage = HEX.withSeparator(" ", 2).decode(
-            "f9 be b4 d9 74 78 00 00  00 00 00 00 00 00 00 00" +
-            "02 01 00 00 e2 93 cd be  01 00 00 00 01 6d bd db" +
-            "08 5b 1d 8a f7 51 84 f0  bc 01 fa d5 8d 12 66 e9" +
-            "b6 3b 50 88 19 90 e4 b4  0d 6a ee 36 29 00 00 00" +
-            "00 8b 48 30 45 02 21 00  f3 58 1e 19 72 ae 8a c7" +
-            "c7 36 7a 7a 25 3b c1 13  52 23 ad b9 a4 68 bb 3a" +
-            "59 23 3f 45 bc 57 83 80  02 20 59 af 01 ca 17 d0" +
-            "0e 41 83 7a 1d 58 e9 7a  a3 1b ae 58 4e de c2 8d" +
-            "35 bd 96 92 36 90 91 3b  ae 9a 01 41 04 9c 02 bf" +
-            "c9 7e f2 36 ce 6d 8f e5  d9 40 13 c7 21 e9 15 98" +
-            "2a cd 2b 12 b6 5d 9b 7d  59 e2 0a 84 20 05 f8 fc" +
-            "4e 02 53 2e 87 3d 37 b9  6f 09 d6 d4 51 1a da 8f" +
-            "14 04 2f 46 61 4a 4c 70  c0 f1 4b ef f5 ff ff ff" +
-            "ff 02 40 4b 4c 00 00 00  00 00 19 76 a9 14 1a a0" +
-            "cd 1c be a6 e7 45 8a 7a  ba d5 12 a9 d9 ea 1a fb" +
-            "22 5e 88 ac 80 fa e9 c7  00 00 00 00 19 76 a9 14" +
-            "0e ab 5b ea 43 6a 04 84  cf ab 12 48 5e fd a0 b7" +
-            "8b 4e cc 52 88 ac 00 00  00 00");
+            "4f 3c 5c bb 74 78 00 00  00 00 00 00 00 00 00 00" +
+            "b4 00 00 00 24 82 ff ae  01 00 00 00 01 e7 90 6c" +
+            "5e 12 02 0b b1 6e 4c 12  d9 5c c3 e5 7d 55 d7 ea" +
+            "4a 1f 1b 4a 9b ce 7a 1b  80 2a 0b 54 4f 00 00 00" +
+            "00 43 42 1c 67 57 37 70  26 98 4e 10 67 dd 1a 4b" +
+            "de 32 6d 1f f7 f8 d8 0a  5d 7a 93 75 85 e5 c6 23" +
+            "82 a3 af 97 ac 6c 2c 5d  77 d7 0c fd d7 0c df 39" +
+            "ff ab e2 bb 36 7a 83 00  2b 0a f2 2d be b8 bf 2a" +
+            "9d 6d 3f 3d 01 ff ff ff  ff 02 80 09 8d 25 00 00" +
+            "00 00 16 14 0b e0 06 a3  cc b4 19 f7 22 e5 59 06" +
+            "56 25 f9 8e 5a 80 03 e5  ac 58 5a 34 00 00 00 00" +
+            "00 16 14 ef 72 e0 62 bf  0d ed cc a5 a6 68 b0 fb" +
+            "1a 84 3e 5c fc a9 9e ac  00 00 00 00");
 
     @Test
     public void testAddr() throws Exception {
@@ -156,21 +151,21 @@ public class BitcoinSerializerTest {
     public void testHeaders1() throws Exception {
         BitcoinSerializer bs = new BitcoinSerializer(MainNetParams.get());
 
-        HeadersMessage hm = (HeadersMessage) bs.deserialize(ByteBuffer.wrap(HEX.decode("f9beb4d9686561" +
-                "646572730000000000520000005d4fab8101010000006fe28c0ab6f1b372c1a6a246ae6" +
-                "3f74f931e8365e15a089c68d6190000000000982051fd1e4ba744bbbe680e1fee14677b" +
-                "a1a3c3540bf7b1cdb606e857233e0e61bc6649ffff001d01e3629900")));
+        HeadersMessage hm = (HeadersMessage) bs.deserialize(ByteBuffer.wrap(HEX.decode("4f3c5cbb686561" +
+                "6465727300000000005a000000ade9db8e0102000000a37fedb7c176ecacb2d993f6172" +
+                "b3f21f3cea005082742054e346993aeeddc147d02e3df107c4c0d5e0651c3351df90c5f" +
+                "b3446002070a9da4b450bb6bf19dabdc62d75300000000ffff0f1e010000000002af4100")));
 
         // The first block after the genesis
-        // http://blockexplorer.com/b/1
+        // http://spreadcoin.net/explorer/1
         Block block = hm.getBlockHeaders().get(0);
         String hash = block.getHashAsString();
-        assertEquals(hash, "00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048");
+        assertEquals(hash, "b3e028fe396ebaa9115812404d2d3ff65dce68f17ecc431d43745cd7ccc150b8");
 
         assertNull(block.transactions);
 
         assertEquals(Utils.HEX.encode(block.getMerkleRoot().getBytes()),
-                "0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098");
+                "ab9df16bbb50b4a49d0a07026044b35f0cf91d35c351065e0d4c7c10dfe3027d");
     }
 
 
@@ -181,42 +176,36 @@ public class BitcoinSerializerTest {
     public void testHeaders2() throws Exception {
         BitcoinSerializer bs = new BitcoinSerializer(MainNetParams.get());
 
-        HeadersMessage hm = (HeadersMessage) bs.deserialize(ByteBuffer.wrap(HEX.decode("f9beb4d96865616465" +
-                "72730000000000e701000085acd4ea06010000006fe28c0ab6f1b372c1a6a246ae63f74f931e" +
-                "8365e15a089c68d6190000000000982051fd1e4ba744bbbe680e1fee14677ba1a3c3540bf7b1c" +
-                "db606e857233e0e61bc6649ffff001d01e3629900010000004860eb18bf1b1620e37e9490fc8a" +
-                "427514416fd75159ab86688e9a8300000000d5fdcc541e25de1c7a5addedf24858b8bb665c9f36" +
-                "ef744ee42c316022c90f9bb0bc6649ffff001d08d2bd610001000000bddd99ccfda39da1b108ce1" +
-                "a5d70038d0a967bacb68b6b63065f626a0000000044f672226090d85db9a9f2fbfe5f0f9609b387" +
-                "af7be5b7fbb7a1767c831c9e995dbe6649ffff001d05e0ed6d00010000004944469562ae1c2c74" +
-                "d9a535e00b6f3e40ffbad4f2fda3895501b582000000007a06ea98cd40ba2e3288262b28638cec" +
-                "5337c1456aaf5eedc8e9e5a20f062bdf8cc16649ffff001d2bfee0a9000100000085144a84488e" +
-                "a88d221c8bd6c059da090e88f8a2c99690ee55dbba4e00000000e11c48fecdd9e72510ca84f023" +
-                "370c9a38bf91ac5cae88019bee94d24528526344c36649ffff001d1d03e4770001000000fc33f5" +
-                "96f822a0a1951ffdbf2a897b095636ad871707bf5d3162729b00000000379dfb96a5ea8c81700ea4" +
-                "ac6b97ae9a9312b2d4301a29580e924ee6761a2520adc46649ffff001d189c4c9700")));
+        HeadersMessage hm = (HeadersMessage) bs.deserialize(ByteBuffer.wrap(HEX.decode("4f3c5cbb6865616465" +
+                "7273000000000017020000f83dc5cc06" +
+                "02000000a37fedb7c176ecacb2d993f6172b3f21f3cea005082742054e346993aeeddc147d02e3df107c4c0d5e0651c3351df90c5fb3446002070a9da4b450bb6bf19dabdc62d75300000000ffff0f1e010000000002af4100" +
+                "02000000b850c1ccd75c74431d43cc7ef168ce5df63f2d4d40125811a9ba6e39fe28e0b3da78fc5be172d005f634ea73fb5f386fffcf1f059a297840a33c8f7965813350f662d75300000000ffff0f1e020000000001aa0300" +
+                "02000000970e2cbde1014e61ff80d7e26116d4365c35d8e3519cfcb9bdb745d5667ff1adad91a2c047aa4c1665c750b90a40782e84ca3262e347b0685e8c07450d2eaab90263d75300000000ffff0f1e030000000007d53900" +
+                "02000000b7ae960d20a01e42bd87d5c35e3d580263055aac4849e2a7f7234b64f975774f772fc7ee6983e21169dedaac863c57ab5ca04609ead94672612e59d76555bc750c63d75300000000ffff0f1e0400000000047e3300" +
+                "02000000cb7ed21fa3af9ec13149407a74ca35d3680d3111c8b99e8d4315a2afc841179a39c99e84efee9caa99813ff7e72bcd4959d9a2655715b3f12745e1aad039b5f20363d75300000000ffff0f1e050000000004fc9900" +
+                "020000008fd0b80a71325d8531dd0d312495c2c52af43a2cb0582a5cec8c2172a9a23986a15d9b9172d69def47cca3c0a52f3946ca84fbebb9d0436737dede02e31e0f5c1d63d75300000000ffff0f1e0600000000014b6f00")));
 
         int nBlocks = hm.getBlockHeaders().size();
         assertEquals(nBlocks, 6);
 
         // index 0 block is the number 1 block in the block chain
-        // http://blockexplorer.com/b/1
+        // http://spreadcoin.net/explorer/1
         Block zeroBlock = hm.getBlockHeaders().get(0);
         String zeroBlockHash = zeroBlock.getHashAsString();
 
-        assertEquals("00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048",
+        assertEquals("b3e028fe396ebaa9115812404d2d3ff65dce68f17ecc431d43745cd7ccc150b8",
                 zeroBlockHash);
-        assertEquals(zeroBlock.getNonce(), 2573394689L);
+        assertEquals(zeroBlock.getNonce(), 1101988352L);
 
 
         Block thirdBlock = hm.getBlockHeaders().get(3);
         String thirdBlockHash = thirdBlock.getHashAsString();
 
         // index 3 block is the number 4 block in the block chain
-        // http://blockexplorer.com/b/4
-        assertEquals("000000004ebadb55ee9096c9a2f8880e09da59c0d68b1c228da88e48844a1485",
+        // http://spreadcoin.net/explorer/4
+        assertEquals("9a1741c8afa215438d9eb9c811310d68d335ca747a404931c19eafa31fd27ecb",
                 thirdBlockHash);
-        assertEquals(thirdBlock.getNonce(), 2850094635L);
+        assertEquals(thirdBlock.getNonce(), 863896576L);
     }
 
     @Test

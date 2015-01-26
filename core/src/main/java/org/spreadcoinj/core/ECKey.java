@@ -469,13 +469,15 @@ public class ECKey implements EncryptableItem, Serializable {
     public static class ECDSASignature {
         /** The two components of the signature. */
         public final BigInteger r, s;
+        public final int headerByte;
 
         /**
          * Constructs a signature with the given components. Does NOT automatically canonicalise the signature.
          */
-        public ECDSASignature(BigInteger r, BigInteger s) {
+        public ECDSASignature(BigInteger r, BigInteger s, int headerByte) {
             this.r = r;
             this.s = s;
+            this.headerByte = headerByte;
         }
 
         /**
@@ -492,7 +494,7 @@ public class ECKey implements EncryptableItem, Serializable {
                 //    N = 10
                 //    s = 8, so (-8 % 10 == 2) thus both (r, 8) and (r, 2) are valid solutions.
                 //    10 - 8 == 2, giving us always the latter solution, which is canonical.
-                return new ECDSASignature(r, CURVE.getN().subtract(s));
+                return new ECDSASignature(r, CURVE.getN().subtract(s), headerByte);
             } else {
                 return this;
             }
@@ -527,13 +529,43 @@ public class ECKey implements EncryptableItem, Serializable {
                 }
                 // OpenSSL deviates from the DER spec by interpreting these values as unsigned, though they should not be
                 // Thus, we always use the positive versions. See: http://r6.ca/blog/20111119T211504Z.html
-                return new ECDSASignature(r.getPositiveValue(), s.getPositiveValue());
+                return new ECDSASignature(r.getPositiveValue(), s.getPositiveValue(), 0);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {
                 if (decoder != null)
                     try { decoder.close(); } catch (IOException x) {}
             }
+        }
+
+        public byte[] encodeToCompact() {
+            try {
+                return compactByteStream().toByteArray();
+            } catch (IOException e) {
+                throw new RuntimeException(e);  // Cannot happen.
+            }
+        }
+
+        public static ECDSASignature decodeFromCompact(byte[] bytes) {
+            try {
+                if (bytes.length < 65)
+                    throw new SignatureException("Signature truncated, expected 65 bytes and got " + bytes.length);
+                BigInteger r = new BigInteger(1, Arrays.copyOfRange(bytes, 1, 33));
+                BigInteger s = new BigInteger(1, Arrays.copyOfRange(bytes, 33, 65));
+                int header = bytes[0] & 0xFF;
+                return new ECDSASignature(r, s, header);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        protected ByteArrayOutputStream compactByteStream() throws IOException {
+            // Usually 65 bytes.
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(65);
+            bos.write(headerByte);
+            bos.write(Utils.bigIntegerToBytes(r, 32), 0, 32);
+            bos.write(Utils.bigIntegerToBytes(s, 32), 0, 32);
+            return bos;
         }
 
         protected ByteArrayOutputStream derByteStream() throws IOException {
@@ -614,7 +646,19 @@ public class ECKey implements EncryptableItem, Serializable {
         ECPrivateKeyParameters privKey = new ECPrivateKeyParameters(privateKeyForSigning, CURVE);
         signer.init(true, privKey);
         BigInteger[] components = signer.generateSignature(input.getBytes());
-        return new ECDSASignature(components[0], components[1]).toCanonicalised();
+        // Now we have to work backwards to figure out the recId needed to recover the signature.
+        int recId = -1;
+        for (int i = 0; i < 4; i++) {
+            ECKey k = ECKey.recoverFromSignature(i, new ECDSASignature(components[0], components[1], 0).toCanonicalised(), input, false);
+            if (k != null && k.pub.equals(pub)) {
+                recId = i;
+                break;
+            }
+        }
+        if (recId == -1)
+            throw new RuntimeException("Could not construct a recoverable key. This should never happen.");
+        int headerByte = recId + 27;
+        return new ECDSASignature(components[0], components[1], headerByte).toCanonicalised();
     }
 
     /**
@@ -658,7 +702,7 @@ public class ECKey implements EncryptableItem, Serializable {
     public static boolean verify(byte[] data, byte[] signature, byte[] pub) {
         if (NativeSecp256k1.enabled)
             return NativeSecp256k1.verify(data, signature, pub);
-        return verify(data, ECDSASignature.decodeFromDER(signature), pub);
+        return verify(data, ECDSASignature.decodeFromCompact(signature), pub);
     }
 
     /**
@@ -802,7 +846,6 @@ public class ECKey implements EncryptableItem, Serializable {
             throw new SignatureException("Header byte out of range: " + header);
         BigInteger r = new BigInteger(1, Arrays.copyOfRange(signatureEncoded, 1, 33));
         BigInteger s = new BigInteger(1, Arrays.copyOfRange(signatureEncoded, 33, 65));
-        ECDSASignature sig = new ECDSASignature(r, s);
         byte[] messageBytes = Utils.formatMessageForSigning(message);
         // Note that the C++ code doesn't actually seem to specify any character encoding. Presumably it's whatever
         // JSON-SPIRIT hands back. Assume UTF-8 for now.
@@ -813,6 +856,7 @@ public class ECKey implements EncryptableItem, Serializable {
             header -= 4;
         }
         int recId = header - 27;
+        ECDSASignature sig = new ECDSASignature(r, s, recId);
         ECKey key = ECKey.recoverFromSignature(recId, sig, messageHash, compressed);
         if (key == null)
             throw new SignatureException("Could not recover public key from signature");
@@ -824,17 +868,10 @@ public class ECKey implements EncryptableItem, Serializable {
         if (signatureEncoded.length < 65)
             throw new SignatureException("Signature truncated, expected 65 bytes and got " + signatureEncoded.length);
         int header = signatureEncoded[0] & 0xFF;
-        // The header byte: 0x1B = first key with even y, 0x1C = first key with odd y,
-        //                  0x1D = second key with even y, 0x1E = second key with odd y
-        if (header < 27 || header > 34)
-            throw new SignatureException("Header byte out of range: " + header);
-        BigInteger r = new BigInteger(1, Arrays.copyOfRange(signatureEncoded, 1, 33));
-        BigInteger s = new BigInteger(1, Arrays.copyOfRange(signatureEncoded, 33, 65));
-        ECDSASignature sig = new ECDSASignature(r, s);
         if (header >= 31) {
-            compressed = true;
             header -= 4;
         }
+        ECDSASignature sig = ECKey.ECDSASignature.decodeFromCompact(signatureEncoded);
         int recId = header - 27;
         ECKey key = ECKey.recoverFromSignature(recId, sig, hash, compressed);
         if (key == null)

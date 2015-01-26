@@ -293,10 +293,11 @@ public class Block extends Message {
             parseTransactions();
             length = cursor - offset;
         } else {
+            height = getUint32(Block.HEADER_POS_HEIGHT);
             transactionBytesValid = !transactionsParsed || parseRetain && length > getHeaderSize();
         }
-        headerBytesValid = !headerParsed || parseRetain && length >= getHeaderSize();
         height = getUint32(Block.HEADER_POS_HEIGHT);
+        headerBytesValid = !headerParsed || parseRetain && length >= getHeaderSize();
     }
 
     /*
