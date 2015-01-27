@@ -45,6 +45,7 @@ public class UnitTestParams extends NetworkParameters {
         spendableCoinbaseDepth = 5;
         subsidyDecreaseBlockCount = 100;
         dnsSeeds = null;
+        addrSeeds = null;
 
         firstHardforkBlock = 2200;
         secondHardforkBlock = 43000;

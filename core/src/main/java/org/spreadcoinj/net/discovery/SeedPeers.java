@@ -30,9 +30,26 @@ import java.util.concurrent.TimeUnit;
  */
 public class SeedPeers implements PeerDiscovery {
     private NetworkParameters params;
+    private int[] seedAddrs;
     private int pnseedIndex;
 
+    /**
+     * Supports finding peers by IP addresses
+     *
+     * @param params Network parameters to be used for port information.
+     */
     public SeedPeers(NetworkParameters params) {
+        this(params.getAddrSeeds(), params);
+    }
+
+    /**
+     * Supports finding peers by IP addresses
+     *
+     * @param seedAddrs IP addresses for seed addresses.
+     * @param params Network parameters to be used for port information.
+     */
+    public SeedPeers(int[] seedAddrs, NetworkParameters params) {
+        this.seedAddrs = seedAddrs;
         this.params = params;
     }
 
@@ -53,7 +70,10 @@ public class SeedPeers implements PeerDiscovery {
     }
 
     @Nullable
-    private InetSocketAddress nextPeer() throws UnknownHostException {
+    private InetSocketAddress nextPeer() throws UnknownHostException, PeerDiscoveryException {
+        if (seedAddrs == null || seedAddrs.length == 0)
+            throw new PeerDiscoveryException("No IP address seeds configured; unable to find any peers");
+
         if (pnseedIndex >= seedAddrs.length) return null;
         return new InetSocketAddress(convertAddress(seedAddrs[pnseedIndex++]),
                 params.getPort());
@@ -88,17 +108,6 @@ public class SeedPeers implements PeerDiscovery {
         return InetAddress.getByAddress(v4addr);
     }
 
-    public static int[] seedAddrs =
-            {
-                    // Spread-FIXME: Add more seed nodes
-                    0x203aedcf, 0x95b35a4e, 0x7a0b0732, 0xc63a6f3e, 0x22f4fbac, 0x60a5c0b2, 0x41546f76, 0x2f3d6853,
-                    0x14d8b751, 0xa0845a45, 0x3caa4a4c, 0x72f68368, 0xfd351fb0, 0x75845a45, 0x3e6f3ac6, 0xcbe5ac45,
-                    0xa3babc4e, 0x3baa4a4c, 0x43e49850, 0x7ab969b7, 0x2a32e52e, 0x31ffff54, 0xdc04c5d9, 0x16e6e6b4,
-                    0x8cd0a52e, 0x0bcc39ae, 0x6d6b6f12, 0x1a7f6f12, 0x776d6f12, 0x9a02c162, 0xf13014d4, 0x16d40151,
-                    0x60096f12, 0x36056112, 0xcca7bc4e, 0x63e2205a, 0x70d01ad8, 0x88bed75b, 0x17132b1f, 0x8d466659,
-                    0xb4e5e352, 0x47f4cd48, 0x22f7185e, 0xe6537057, 0x7ab86344, 0xe5591518, 0xe8a9c418, 0x6db09d1b,
-            };
-    
     @Override
     public void shutdown() {
     }
