@@ -52,7 +52,9 @@ public class TestNetParams extends NetworkParameters {
 
         dnsSeeds = new String[] {
         };
-        addrSeeds = null;
+        addrSeeds = new int[] {
+                0x7e532468, 0x721afb60, 0xf75dc451, 0xb999404f, 0x2b033649, 0x64f17eb0, 0x72f68368, 0x6c59b8ad,
+        };
 
         firstHardforkBlock = 0;
         secondHardforkBlock = 0;
