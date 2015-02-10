@@ -393,7 +393,7 @@
         </dependency>
         -->
         <dependency>
-            <groupId>org.spreadcoinj</groupId>
+            <groupId>org.bitcoinj</groupId>
             <artifactId>orchid</artifactId>
             <version>1.0</version>
         </dependency>
