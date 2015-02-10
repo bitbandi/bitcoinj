@@ -34,20 +34,20 @@ public class TestNetParams extends NetworkParameters {
         packetMagic = 0xc2e3cbfa;
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
-        maxTarget = Utils.decodeCompactBits(0x1e0fffffL);
+        maxTarget = Utils.decodeCompactBits(0x1f3fffffL);
         port = 51678;
         addressHeader = 111;
         p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
         dumpedPrivateKeyHeader = 239;
-        genesisBlock.setTime(1406620001L);
-        genesisBlock.setDifficultyTarget(0x1e0fffffL);
+        genesisBlock.setTime(1423400000L);
+        genesisBlock.setDifficultyTarget(0x1f3fffffL);
         genesisBlock.setNonce(0);
         genesisBlock.setHeight(0);
         spendableCoinbaseDepth = 100;
         subsidyDecreaseBlockCount = 2000000;
         String genesisHash = genesisBlock.getHashAsString();
-        checkState(genesisHash.equals("31d842d76615b7faa1c2f7a773260acd6aa1a3d5cf720fb2688b712f93337a0b"));
+        checkState(genesisHash.equals("192c73a268208dab77debebc64844506a70b08c14c032c6681a164e5cb0180f7"));
         alertSigningKey = Utils.HEX.decode("03f5cee48df4990af166d539f1cc42367034558d62e765a30ed3228ec418cc46bb");
 
         dnsSeeds = new String[] {
@@ -55,6 +55,7 @@ public class TestNetParams extends NetworkParameters {
 
         firstHardforkBlock = 0;
         secondHardforkBlock = 0;
+        thirdHardforkBlock = 700;
     }
 
     private static TestNetParams instance;

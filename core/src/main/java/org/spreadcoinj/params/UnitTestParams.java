@@ -48,6 +48,7 @@ public class UnitTestParams extends NetworkParameters {
 
         firstHardforkBlock = 2200;
         secondHardforkBlock = 43000;
+        thirdHardforkBlock = Integer.MAX_VALUE;
 //        firstHardforkBlock = Integer.MAX_VALUE;
 //        secondHardforkBlock = Integer.MAX_VALUE;
 

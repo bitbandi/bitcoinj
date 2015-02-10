@@ -38,6 +38,7 @@ public class RegTestParams extends TestNetParams {
 
         firstHardforkBlock = Integer.MAX_VALUE;
         secondHardforkBlock = Integer.MAX_VALUE;
+        thirdHardforkBlock = Integer.MAX_VALUE;
 
     }
 

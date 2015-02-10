@@ -92,6 +92,9 @@ public class HeadersMessage extends Message {
                 // Workaround for missing data
                 if (blockHeader[184] == 0 && Arrays.equals(new byte[96], Arrays.copyOfRange(blockHeader, 88, 184)))
                     throw new ProtocolException("Client using bugger code");
+                if (height > params.getThirdHardforkBlock()) {
+                    readBytes(2);
+                }
             } else {
                 blockHeader = readBytes(89);
                 if (blockHeader[88] != 0)

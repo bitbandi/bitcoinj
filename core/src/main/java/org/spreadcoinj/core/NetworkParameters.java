@@ -78,6 +78,7 @@ public abstract class NetworkParameters implements Serializable {
 
     protected int firstHardforkBlock;
     protected int secondHardforkBlock;
+    protected int thirdHardforkBlock;
 
     /**
      * See getId(). This may be null for old deserialized wallets. In that case we derive it heuristically
@@ -342,6 +343,10 @@ public abstract class NetworkParameters implements Serializable {
 
     public int getSecondHardforkBlock() {
         return secondHardforkBlock;
+    }
+
+    public int getThirdHardforkBlock() {
+        return thirdHardforkBlock;
     }
 
 }

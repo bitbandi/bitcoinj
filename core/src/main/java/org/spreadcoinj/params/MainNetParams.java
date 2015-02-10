@@ -60,6 +60,7 @@ public class MainNetParams extends NetworkParameters {
 
         firstHardforkBlock = 2200;
         secondHardforkBlock = 43000;
+        thirdHardforkBlock = 999999;
     }
 
     private static MainNetParams instance;
